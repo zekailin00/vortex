@@ -4,7 +4,7 @@
 extern "C" {
 #include <softfloat.h>
 #include <internals.h>
-#include <../RISCV/specialize.h>
+#include <specialize.h>
 }
 
 #define F32_SIGN 0x80000000

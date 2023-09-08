@@ -1,7 +1,6 @@
 `ifndef VX_ICACHE_CORE_REQ_IF
 `define VX_ICACHE_CORE_REQ_IF
 
-`include "../cache/VX_cache_define.vh"
 
 interface VX_icache_req_if #(
     parameter WORD_SIZE = 1,

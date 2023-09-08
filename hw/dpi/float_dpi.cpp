@@ -6,7 +6,7 @@
 #include <iostream>
 #include <rvfloats.h>
 #include "svdpi.h"
-#include "verilated_vpi.h"
+//#include "verilated_vpi.h"
 #include "VX_config.h"
 
 extern "C" {

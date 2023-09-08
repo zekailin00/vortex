@@ -1,6 +1,15 @@
 `ifndef VX_CONFIG
 `define VX_CONFIG
 
+`ifndef FPU_DPI
+`define FPU_DPI
+`endif
+
+// required if texture unit is compiled at all
+`ifndef EXT_TEX_ENABLE
+`define EXT_TEX_ENABLE 1
+`endif
+
 `ifndef XLEN
 `define XLEN 32
 `endif

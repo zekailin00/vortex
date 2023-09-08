@@ -5,7 +5,7 @@
 #include <mutex>
 #include <iostream>
 #include "svdpi.h"
-#include "verilated_vpi.h"
+//#include "verilated_vpi.h"
 #include "VX_config.h"
 
 extern "C" {
@@ -148,19 +148,20 @@ void dpi_idiv(bool enable, int a, int b, bool is_signed, int* quotient, int* rem
   }
 }
 
-void dpi_trace(const char* format, ...) { 
-  if (!sim_trace_enabled())
-    return;
-  va_list va;
-	va_start(va, format);  
-	vprintf(format, va);
-	va_end(va);		  
+void dpi_trace(const char* format, ...) {
+// TODO: not supported in VCS
+//   if (!sim_trace_enabled())
+//     return;
+//   va_list va;
+// 	va_start(va, format);
+// 	vprintf(format, va);
+// 	va_end(va);
 }
 
 void dpi_trace_start() { 
-  sim_trace_enable(true);
+//  sim_trace_enable(true);
 }
 
 void dpi_trace_stop() { 
-  sim_trace_enable(false);
+//  sim_trace_enable(false);
 }
