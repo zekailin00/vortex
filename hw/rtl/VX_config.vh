@@ -56,6 +56,8 @@
 
 `ifndef STARTUP_ADDR
 `define STARTUP_ADDR 32'h80000000
+// 0x10000 is the bootrom address
+//`define STARTUP_ADDR 32'h10000
 `endif
 
 `ifndef IO_BASE_ADDR

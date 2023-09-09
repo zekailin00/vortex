@@ -55,7 +55,7 @@
     $error msg
 
 `define ASSERT(cond, msg) \
-    assert(cond) else $error msg
+    assert((reset !== 1'b0) || (cond)) else $error msg
 
 `define STATIC_ASSERT(cond, msg) \
     generate                     \
@@ -64,7 +64,7 @@
 
 `define RUNTIME_ASSERT(cond, msg)     \
     always @(posedge clk) begin       \
-        assert(cond) else $error msg; \
+        assert((reset !== 1'b0) || (cond)) else $error msg; \
     end
 
 `define TRACING_ON  /* verilator tracing_on */

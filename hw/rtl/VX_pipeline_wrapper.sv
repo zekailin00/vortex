@@ -17,13 +17,13 @@ module Vortex #(
     input         interrupts_meip,
     input         interrupts_seip,
 
-    input         imem_a_ready, // TODO: assert true
+    input         imem_a_ready,
     input         imem_d_valid,
     input  [2:0]  imem_d_bits_opcode,
     input  [1:0]  imem_d_bits_param,
     input  [3:0]  imem_d_bits_size,
     input  [7:0]  imem_d_bits_source,
-    input  [2:0]  imem_d_bits_sink,
+    input  [0:0]  imem_d_bits_sink,
     input         imem_d_bits_denied,
     input  [31:0] imem_d_bits_data,
     input         imem_d_bits_corrupt,
@@ -44,7 +44,7 @@ module Vortex #(
     input  [1:0]  dmem_d_bits_param,
     input  [3:0]  dmem_d_bits_size,
     input  [7:0]  dmem_d_bits_source,
-    input  [2:0]  dmem_d_bits_sink,
+    input  [0:0]  dmem_d_bits_sink,
     input         dmem_d_bits_denied,
     input  [31:0] dmem_d_bits_data,
     input         dmem_d_bits_corrupt,
@@ -108,7 +108,17 @@ module Vortex #(
     VX_perf_memsys_if perf_memsys_if();
 `endif
 
+    logic msip_1d, intr_reset;
     /* interrupts */
+    always @(posedge clock) begin
+        msip_1d <= interrupts_msip;
+        if (~msip_1d && interrupts_msip) begin
+            // rising edge
+            intr_reset <= 1'b1;
+        end else begin
+            intr_reset <= 1'b0;
+        end
+    end
 
     /* imem */
     assign icache_rsp_if.valid = imem_d_valid;
@@ -121,11 +131,11 @@ module Vortex #(
     // end
     assign imem_a_bits_source = icache_req_if.tag[7:0];
     assign imem_a_valid = icache_req_if.valid;
-    assign imem_a_bits_address = icache_req_if.addr;
+    assign imem_a_bits_address = {icache_req_if.addr, 2'b0};
     assign icache_req_if.ready = imem_a_ready;
 
     assign imem_a_bits_data = 32'd0;
-    assign imem_a_bits_mask = 4'd0;
+    assign imem_a_bits_mask = 4'hf;
     assign imem_a_bits_corrupt = 1'b0;
     assign imem_a_bits_param = 3'd0;
     assign imem_a_bits_size = 4'd2; // 32b
@@ -139,7 +149,7 @@ module Vortex #(
     assign dmem_d_ready = dcache_rsp_if.ready;
 
     assign dmem_a_valid = dcache_req_if.valid;
-    assign dmem_a_bits_address = dcache_req_if.addr;
+    assign dmem_a_bits_address = {dcache_req_if.addr, 2'b0};
     assign dmem_a_bits_source = dcache_req_if.tag[7:0];
     assign dmem_a_bits_data = dcache_req_if.data;
     assign dmem_a_bits_opcode = dcache_req_if.rw ? 3'd4 /*Get*/ : 3'd0 /*PutFull*/; // rw = ~wb
@@ -190,7 +200,7 @@ module Vortex #(
     `endif
 
         .clk(clock),
-        .reset(reset),
+        .reset(reset || intr_reset),
 
         // Dcache core request
         .dcache_req_valid   (dcache_req_if.valid),
