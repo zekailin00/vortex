@@ -157,6 +157,7 @@
 `define CSR_MTVEC       12'h305
 
 `define CSR_MEPC        12'h341
+`define CSR_MCAUSE      12'h342
 
 // Machine Performance-monitoring counters
 `define CSR_MPM_BASE                12'hB00

@@ -75,6 +75,8 @@ module VX_execute #(
 
     VX_tex_csr_if tex_csr_if();
 
+    VX_csr_to_alu_if csr_to_alu_if();
+
 `ifdef PERF_ENABLE
     VX_perf_tex_if perf_tex_if();
 `endif
@@ -141,6 +143,7 @@ module VX_execute #(
         .clk            (clk),
         .reset          (alu_reset),
         .alu_req_if     (alu_req_if),
+        .csr_to_alu_if  (csr_to_alu_if),
         .branch_ctl_if  (branch_ctl_if),
         .alu_commit_if  (alu_commit_if)
     );
@@ -175,7 +178,8 @@ module VX_execute #(
         .perf_memsys_if (perf_memsys_if),
         .perf_pipeline_if(perf_pipeline_if),
     `endif    
-        .cmt_to_csr_if  (cmt_to_csr_if),    
+        .cmt_to_csr_if  (cmt_to_csr_if),
+        .csr_to_alu_if  (csr_to_alu_if),
         .fetch_to_csr_if(fetch_to_csr_if),
         .csr_req_if     (csr_req_if),   
         .csr_commit_if  (csr_commit_if),

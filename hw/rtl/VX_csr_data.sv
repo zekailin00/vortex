@@ -22,7 +22,9 @@ module VX_csr_data #(
 `endif
 `ifdef EXT_TEX_ENABLE
     VX_tex_csr_if.master            tex_csr_if,
-`endif 
+`endif
+
+    VX_csr_to_alu_if.master         csr_to_alu_if,
 
     input wire                      read_enable,
     input wire [`UUID_BITS-1:0]     read_uuid,
@@ -45,8 +47,8 @@ module VX_csr_data #(
     reg [`CSR_WIDTH-1:0] csr_medeleg;
     reg [`CSR_WIDTH-1:0] csr_mideleg;
     reg [`CSR_WIDTH-1:0] csr_mie;
-    reg [`CSR_WIDTH-1:0] csr_mtvec;
-    reg [`CSR_WIDTH-1:0] csr_mepc;    
+    reg [31:0] csr_mtvec;
+    reg [31:0] csr_mepc;
     reg [`CSR_WIDTH-1:0] csr_pmpcfg [0:0];
     reg [`CSR_WIDTH-1:0] csr_pmpaddr [0:0];
     reg [63:0] csr_cycle;
@@ -74,8 +76,8 @@ module VX_csr_data #(
                     `CSR_MEDELEG:  csr_medeleg    <= write_data[`CSR_WIDTH-1:0];
                     `CSR_MIDELEG:  csr_mideleg    <= write_data[`CSR_WIDTH-1:0];
                     `CSR_MIE:      csr_mie        <= write_data[`CSR_WIDTH-1:0];
-                    `CSR_MTVEC:    csr_mtvec      <= write_data[`CSR_WIDTH-1:0];
-                    `CSR_MEPC:     csr_mepc       <= write_data[`CSR_WIDTH-1:0];
+                    `CSR_MTVEC:    csr_mtvec      <= write_data[31:0];
+                    `CSR_MEPC:     csr_mepc       <= write_data[31:0];
                     `CSR_PMPCFG0:  csr_pmpcfg[0]  <= write_data[`CSR_WIDTH-1:0];
                     `CSR_PMPADDR0: csr_pmpaddr[0] <= write_data[`CSR_WIDTH-1:0];
                     default: begin
@@ -94,6 +96,8 @@ module VX_csr_data #(
     end
 
     `UNUSED_VAR (write_data)
+
+    assign csr_to_alu_if.csr_mtvec = csr_mtvec;
 
     // TEX CSRs
 `ifdef EXT_TEX_ENABLE    
@@ -229,6 +233,7 @@ module VX_csr_data #(
             `CSR_MTVEC     : read_data_r = 32'(csr_mtvec);
 
             `CSR_MEPC      : read_data_r = 32'(csr_mepc);
+            `CSR_MCAUSE    : read_data_r = 32'd11; // hardcoded to M triggered
 
             `CSR_PMPCFG0   : read_data_r = 32'(csr_pmpcfg[0]);
             `CSR_PMPADDR0  : read_data_r = 32'(csr_pmpaddr[0]);

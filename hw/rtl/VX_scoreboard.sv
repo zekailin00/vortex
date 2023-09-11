@@ -76,6 +76,7 @@ module VX_scoreboard  #(
                     ("%t: *** core%0d-deadlock: wid=%0d, PC=%0h, rd=%0d, wb=%0d, inuse=%b%b%b%b (#%0d)",
                         $time, CORE_ID, ibuffer_if.wid, ibuffer_if.PC, ibuffer_if.rd, ibuffer_if.wb, 
                         deq_inuse_rd, deq_inuse_rs1, deq_inuse_rs2, deq_inuse_rs3, ibuffer_if.uuid));
+                if (deadlock_ctr > deadlock_timeout) $finish();
             end else if (ibuffer_if.valid && ibuffer_if.ready) begin
                 deadlock_ctr <= 0;
             end

@@ -8,6 +8,7 @@ module VX_alu_unit #(
     
     // Inputs
     VX_alu_req_if.slave     alu_req_if,
+    VX_csr_to_alu_if.slave  csr_to_alu_if,
 
     // Outputs
     VX_branch_ctl_if.master branch_ctl_if,
@@ -32,11 +33,17 @@ module VX_alu_unit #(
     wire [1:0]          alu_op_class = `INST_ALU_OP_CLASS(alu_op); 
     wire                      is_sub = (alu_op == `INST_ALU_SUB);
 
+    wire ebreak;
+    assign ebreak = alu_req_if.valid && alu_req_if.ready
+                 && is_br_op && (br_op == `INST_BR_EBREAK || br_op == `INST_BR_ECALL);
+
     wire [`NUM_THREADS-1:0][31:0] alu_in1 = alu_req_if.rs1_data;
     wire [`NUM_THREADS-1:0][31:0] alu_in2 = alu_req_if.rs2_data;
 
-    wire [`NUM_THREADS-1:0][31:0] alu_in1_PC   = alu_req_if.use_PC ? {`NUM_THREADS{alu_req_if.PC}} : alu_in1;
-    wire [`NUM_THREADS-1:0][31:0] alu_in2_imm  = alu_req_if.use_imm ? {`NUM_THREADS{alu_req_if.imm}} : alu_in2;
+    wire [`NUM_THREADS-1:0][31:0] alu_in1_PC   = ebreak ? {`NUM_THREADS{csr_to_alu_if.csr_mtvec}} :
+                                                 (alu_req_if.use_PC ? {`NUM_THREADS{alu_req_if.PC}} : alu_in1);
+    wire [`NUM_THREADS-1:0][31:0] alu_in2_imm  = ebreak ? '0 :
+                                                 (alu_req_if.use_imm ? {`NUM_THREADS{alu_req_if.imm}} : alu_in2);
     wire [`NUM_THREADS-1:0][31:0] alu_in2_less = (alu_req_if.use_imm && ~is_br_op) ? {`NUM_THREADS{alu_req_if.imm}} : alu_in2;
 
     for (genvar i = 0; i < `NUM_THREADS; i++) begin

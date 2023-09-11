@@ -77,7 +77,7 @@ module VX_lsu_unit #(
     wire ready_in;
     wire stall_in = ~ready_in && req_valid; 
     
-    wire lsu_valid = lsu_req_if.valid && ~fence_wait;
+    wire lsu_valid = lsu_req_if.valid && ~fence_wait && ~lsu_req_if.is_fence;
 
     wire lsu_wb = lsu_req_if.wb | lsu_req_if.is_prefetch;
 

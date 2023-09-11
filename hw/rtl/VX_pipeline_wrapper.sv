@@ -22,8 +22,8 @@ module Vortex #(
     input  [2:0]  imem_d_bits_opcode,
     input  [1:0]  imem_d_bits_param,
     input  [3:0]  imem_d_bits_size,
-    input  [7:0]  imem_d_bits_source,
-    input  [0:0]  imem_d_bits_sink,
+    input  [9:0]  imem_d_bits_source,
+    input  [2:0]  imem_d_bits_sink,
     input         imem_d_bits_denied,
     input  [31:0] imem_d_bits_data,
     input         imem_d_bits_corrupt,
@@ -31,7 +31,7 @@ module Vortex #(
     output [2:0]  imem_a_bits_opcode,
     output [2:0]  imem_a_bits_param,
     output [3:0]  imem_a_bits_size,
-    output [7:0]  imem_a_bits_source,
+    output [9:0]  imem_a_bits_source,
     output [31:0] imem_a_bits_address,
     output [3:0]  imem_a_bits_mask,
     output [31:0] imem_a_bits_data,
@@ -43,8 +43,8 @@ module Vortex #(
     input  [2:0]  dmem_d_bits_opcode,
     input  [1:0]  dmem_d_bits_param,
     input  [3:0]  dmem_d_bits_size,
-    input  [7:0]  dmem_d_bits_source,
-    input  [0:0]  dmem_d_bits_sink,
+    input  [9:0]  dmem_d_bits_source,
+    input  [2:0]  dmem_d_bits_sink,
     input         dmem_d_bits_denied,
     input  [31:0] dmem_d_bits_data,
     input         dmem_d_bits_corrupt,
@@ -52,7 +52,7 @@ module Vortex #(
     output [2:0]  dmem_a_bits_opcode,
     output [2:0]  dmem_a_bits_param,
     output [3:0]  dmem_a_bits_size,
-    output [7:0]  dmem_a_bits_source,
+    output [9:0]  dmem_a_bits_source,
     output [31:0] dmem_a_bits_address,
     output [3:0]  dmem_a_bits_mask,
     output [31:0] dmem_a_bits_data,
@@ -108,15 +108,21 @@ module Vortex #(
     VX_perf_memsys_if perf_memsys_if();
 `endif
 
+    logic [3:0] intr_counter;
     logic msip_1d, intr_reset;
+
     /* interrupts */
     always @(posedge clock) begin
         msip_1d <= interrupts_msip;
         if (~msip_1d && interrupts_msip) begin
             // rising edge
+            intr_counter <= 4'hf;
             intr_reset <= 1'b1;
         end else begin
-            intr_reset <= 1'b0;
+            if (intr_counter !== 4'd0) begin
+                intr_counter <= intr_counter - 4'd1;
+                intr_reset <= 1'b1;
+            end else intr_reset <= 1'b0;
         end
     end
 
@@ -129,7 +135,7 @@ module Vortex #(
     //     if (icache_req_if.valid && icache_req_if.ready)
     //         icache_rsp_if.tag <= icache_req_if.tag;
     // end
-    assign imem_a_bits_source = icache_req_if.tag[7:0];
+    assign imem_a_bits_source = icache_req_if.tag[9:0];
     assign imem_a_valid = icache_req_if.valid;
     assign imem_a_bits_address = {icache_req_if.addr, 2'b0};
     assign icache_req_if.ready = imem_a_ready;
@@ -142,20 +148,22 @@ module Vortex #(
     assign imem_a_bits_opcode = 3'd4; // Get
 
     /* dmem */
-    assign dcache_rsp_if.valid = dmem_d_valid;
+    assign dcache_rsp_if.valid = dmem_d_valid && (dmem_d_bits_opcode !== 'd0 /*AccessAck*/);
     assign dcache_rsp_if.data = dmem_d_bits_data;
     assign dcache_rsp_if.tag = dmem_d_bits_source;
-    assign dcache_rsp_if.tmask = 'd0; // TODO
+    // vortex expects tmask to be 0 for stores (nonzero tmask will attempt to pop nonexistent lsq entry)
+    assign dcache_rsp_if.tmask = dmem_d_bits_opcode === 'd0 /*AccessAck*/ ? 'h0 : 'hf;
     assign dmem_d_ready = dcache_rsp_if.ready;
 
     assign dmem_a_valid = dcache_req_if.valid;
     assign dmem_a_bits_address = {dcache_req_if.addr, 2'b0};
-    assign dmem_a_bits_source = dcache_req_if.tag[7:0];
+    assign dmem_a_bits_source = dcache_req_if.tag[9:0];
     assign dmem_a_bits_data = dcache_req_if.data;
-    assign dmem_a_bits_opcode = dcache_req_if.rw ? 3'd4 /*Get*/ : 3'd0 /*PutFull*/; // rw = ~wb
-    assign dmem_a_bits_size = $countones(dcache_req_if.byteen) === 'd4 ? 2'd2 :
-        ($countones(dcache_req_if.byteen) === 'd2 ? 2'd1 : 2'd0); // TODO
-    assign dmem_a_bits_mask = 4'(dcache_req_if.byteen >> (dcache_req_if.addr[5:2] << 2));
+    assign dmem_a_bits_opcode = dcache_req_if.rw[0] ? (&dcache_req_if.byteen[0] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/)
+                                                    : 3'd4 /*Get*/; // rw = ~wb = store
+    assign dmem_a_bits_size = 2'd2; /* $countones(dcache_req_if.byteen[0]) === 'd4 ? 2'd2 :
+        ($countones(dcache_req_if.byteen[0]) === 'd2 ? 2'd1 : 2'd0); */
+    assign dmem_a_bits_mask = dcache_req_if.byteen[0];
     assign dcache_req_if.ready = dmem_a_ready;
 
     assign dmem_a_bits_corrupt = 1'b0;
