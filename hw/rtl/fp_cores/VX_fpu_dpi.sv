@@ -105,14 +105,14 @@ module VX_fpu_dpi #(
     generate 
     begin : fma
         
-        wire [`NUM_THREADS-1:0][31:0] result_fma;
-        wire [`NUM_THREADS-1:0][31:0] result_fadd;
-        wire [`NUM_THREADS-1:0][31:0] result_fsub;
-        wire [`NUM_THREADS-1:0][31:0] result_fmul;
-        wire [`NUM_THREADS-1:0][31:0] result_fmadd;
-        wire [`NUM_THREADS-1:0][31:0] result_fmsub;
-        wire [`NUM_THREADS-1:0][31:0] result_fnmadd;
-        wire [`NUM_THREADS-1:0][31:0] result_fnmsub;
+        logic [`NUM_THREADS-1:0][31:0] result_fma;
+        logic [`NUM_THREADS-1:0][31:0] result_fadd;
+        logic [`NUM_THREADS-1:0][31:0] result_fsub;
+        logic [`NUM_THREADS-1:0][31:0] result_fmul;
+        logic [`NUM_THREADS-1:0][31:0] result_fmadd;
+        logic [`NUM_THREADS-1:0][31:0] result_fmsub;
+        logic [`NUM_THREADS-1:0][31:0] result_fnmadd;
+        logic [`NUM_THREADS-1:0][31:0] result_fnmsub;
         
         fflags_t [`NUM_THREADS-1:0] fflags_fma;
         fflags_t [`NUM_THREADS-1:0] fflags_fadd;
@@ -130,13 +130,13 @@ module VX_fpu_dpi #(
 
         always @(*) begin        
             for (integer i = 0; i < `NUM_THREADS; i++) begin
-                // dpi_fadd   (fma_fire, dataa[i], datab[i], frm, result_fadd[i], fflags_fadd[i]);
-                // dpi_fsub   (fma_fire, dataa[i], datab[i], frm, result_fsub[i], fflags_fsub[i]);
-                // dpi_fmul   (fma_fire, dataa[i], datab[i], frm, result_fmul[i], fflags_fmul[i]);
-                // dpi_fmadd  (fma_fire, dataa[i], datab[i], datac[i], frm, result_fmadd[i], fflags_fmadd[i]);
-                // dpi_fmsub  (fma_fire, dataa[i], datab[i], datac[i], frm, result_fmsub[i], fflags_fmsub[i]);
-                // dpi_fnmadd (fma_fire, dataa[i], datab[i], datac[i], frm, result_fnmadd[i], fflags_fnmadd[i]);
-                // dpi_fnmsub (fma_fire, dataa[i], datab[i], datac[i], frm, result_fnmsub[i], fflags_fnmsub[i]);
+                dpi_fadd   (fma_fire, dataa[i], datab[i], frm, result_fadd[i], fflags_fadd[i]);
+                dpi_fsub   (fma_fire, dataa[i], datab[i], frm, result_fsub[i], fflags_fsub[i]);
+                dpi_fmul   (fma_fire, dataa[i], datab[i], frm, result_fmul[i], fflags_fmul[i]);
+                dpi_fmadd  (fma_fire, dataa[i], datab[i], datac[i], frm, result_fmadd[i], fflags_fmadd[i]);
+                dpi_fmsub  (fma_fire, dataa[i], datab[i], datac[i], frm, result_fmsub[i], fflags_fmsub[i]);
+                dpi_fnmadd (fma_fire, dataa[i], datab[i], datac[i], frm, result_fnmadd[i], fflags_fnmadd[i]);
+                dpi_fnmsub (fma_fire, dataa[i], datab[i], datac[i], frm, result_fnmsub[i], fflags_fnmsub[i]);
             end
         end
 
@@ -179,7 +179,7 @@ module VX_fpu_dpi #(
     generate 
     begin : fdiv
 
-        wire [`NUM_THREADS-1:0][31:0] result_fdiv;
+        logic [`NUM_THREADS-1:0][31:0] result_fdiv;
         fflags_t [`NUM_THREADS-1:0] fflags_fdiv;
 
         wire fdiv_valid = (valid_in && core_select == FPU_DIV);
@@ -189,7 +189,7 @@ module VX_fpu_dpi #(
         
         always @(*) begin        
             for (integer i = 0; i < `NUM_THREADS; i++) begin
-                // dpi_fdiv (fdiv_fire, dataa[i], datab[i], frm, result_fdiv[i], fflags_fdiv[i]);
+                dpi_fdiv (fdiv_fire, dataa[i], datab[i], frm, result_fdiv[i], fflags_fdiv[i]);
             end
         end
 
@@ -214,7 +214,7 @@ module VX_fpu_dpi #(
     generate 
     begin : fsqrt
 
-        wire [`NUM_THREADS-1:0][31:0] result_fsqrt;
+        logic [`NUM_THREADS-1:0][31:0] result_fsqrt;
         fflags_t [`NUM_THREADS-1:0] fflags_fsqrt;
 
         wire fsqrt_valid = (valid_in && core_select == FPU_SQRT);
@@ -224,7 +224,7 @@ module VX_fpu_dpi #(
         
         always @(*) begin        
             for (integer i = 0; i < `NUM_THREADS; i++) begin
-                // dpi_fsqrt (fsqrt_fire, dataa[i], frm, result_fsqrt[i], fflags_fsqrt[i]);
+                dpi_fsqrt (fsqrt_fire, dataa[i], frm, result_fsqrt[i], fflags_fsqrt[i]);
             end
         end
 
@@ -249,11 +249,11 @@ module VX_fpu_dpi #(
     generate
     begin : fcvt
 
-        wire [`NUM_THREADS-1:0][31:0] result_fcvt;
-        wire [`NUM_THREADS-1:0][31:0] result_itof;
-        wire [`NUM_THREADS-1:0][31:0] result_utof;
-        wire [`NUM_THREADS-1:0][31:0] result_ftoi;
-        wire [`NUM_THREADS-1:0][31:0] result_ftou;
+        logic [`NUM_THREADS-1:0][31:0] result_fcvt;
+        logic [`NUM_THREADS-1:0][31:0] result_itof;
+        logic [`NUM_THREADS-1:0][31:0] result_utof;
+        logic [`NUM_THREADS-1:0][31:0] result_ftoi;
+        logic [`NUM_THREADS-1:0][31:0] result_ftou;
         
         fflags_t [`NUM_THREADS-1:0] fflags_fcvt;
         fflags_t [`NUM_THREADS-1:0] fflags_itof;
@@ -268,10 +268,10 @@ module VX_fpu_dpi #(
                 
         always @(*) begin        
             for (integer i = 0; i < `NUM_THREADS; i++) begin
-                // dpi_itof (fcvt_fire, dataa[i], frm, result_itof[i], fflags_itof[i]);
-                // dpi_utof (fcvt_fire, dataa[i], frm, result_utof[i], fflags_utof[i]);
-                // dpi_ftoi (fcvt_fire, dataa[i], frm, result_ftoi[i], fflags_ftoi[i]);
-                // dpi_ftou (fcvt_fire, dataa[i], frm, result_ftou[i], fflags_ftou[i]);
+                dpi_itof (fcvt_fire, dataa[i], frm, result_itof[i], fflags_itof[i]);
+                dpi_utof (fcvt_fire, dataa[i], frm, result_utof[i], fflags_utof[i]);
+                dpi_ftoi (fcvt_fire, dataa[i], frm, result_ftoi[i], fflags_ftoi[i]);
+                dpi_ftou (fcvt_fire, dataa[i], frm, result_ftou[i], fflags_ftou[i]);
             end
         end
 
@@ -308,17 +308,17 @@ module VX_fpu_dpi #(
     generate 
     begin : fncp
 
-        wire [`NUM_THREADS-1:0][31:0] result_fncp;
-        wire [`NUM_THREADS-1:0][31:0] result_fclss;
-        wire [`NUM_THREADS-1:0][31:0] result_flt;
-        wire [`NUM_THREADS-1:0][31:0] result_fle;
-        wire [`NUM_THREADS-1:0][31:0] result_feq;
-        wire [`NUM_THREADS-1:0][31:0] result_fmin;
-        wire [`NUM_THREADS-1:0][31:0] result_fmax;
-        wire [`NUM_THREADS-1:0][31:0] result_fsgnj;
-        wire [`NUM_THREADS-1:0][31:0] result_fsgnjn;
-        wire [`NUM_THREADS-1:0][31:0] result_fsgnjx;
-        reg [`NUM_THREADS-1:0][31:0] result_fmv;
+        logic [`NUM_THREADS-1:0][31:0] result_fncp;
+        logic [`NUM_THREADS-1:0][31:0] result_fclss;
+        logic [`NUM_THREADS-1:0][31:0] result_flt;
+        logic [`NUM_THREADS-1:0][31:0] result_fle;
+        logic [`NUM_THREADS-1:0][31:0] result_feq;
+        logic [`NUM_THREADS-1:0][31:0] result_fmin;
+        logic [`NUM_THREADS-1:0][31:0] result_fmax;
+        logic [`NUM_THREADS-1:0][31:0] result_fsgnj;
+        logic [`NUM_THREADS-1:0][31:0] result_fsgnjn;
+        logic [`NUM_THREADS-1:0][31:0] result_fsgnjx;
+        logic [`NUM_THREADS-1:0][31:0] result_fmv;
 
         fflags_t [`NUM_THREADS-1:0] fflags_fncp;
         fflags_t [`NUM_THREADS-1:0] fflags_flt;
@@ -334,15 +334,15 @@ module VX_fpu_dpi #(
                 
         always @(*) begin        
             for (integer i = 0; i < `NUM_THREADS; i++) begin
-                // dpi_fclss  (fncp_fire, dataa[i], result_fclss[i]);
-                // dpi_flt    (fncp_fire, dataa[i], datab[i], result_flt[i], fflags_flt[i]);
-                // dpi_fle    (fncp_fire, dataa[i], datab[i], result_fle[i], fflags_fle[i]);
-                // dpi_feq    (fncp_fire, dataa[i], datab[i], result_feq[i], fflags_feq[i]);
-                // dpi_fmin   (fncp_fire, dataa[i], datab[i], result_fmin[i], fflags_fmin[i]);
-                // dpi_fmax   (fncp_fire, dataa[i], datab[i], result_fmax[i], fflags_fmax[i]);
-                // dpi_fsgnj  (fncp_fire, dataa[i], datab[i], result_fsgnj[i]);
-                // dpi_fsgnjn (fncp_fire, dataa[i], datab[i], result_fsgnjn[i]);
-                // dpi_fsgnjx (fncp_fire, dataa[i], datab[i], result_fsgnjx[i]);
+                dpi_fclss  (fncp_fire, dataa[i], result_fclss[i]);
+                dpi_flt    (fncp_fire, dataa[i], datab[i], result_flt[i], fflags_flt[i]);
+                dpi_fle    (fncp_fire, dataa[i], datab[i], result_fle[i], fflags_fle[i]);
+                dpi_feq    (fncp_fire, dataa[i], datab[i], result_feq[i], fflags_feq[i]);
+                dpi_fmin   (fncp_fire, dataa[i], datab[i], result_fmin[i], fflags_fmin[i]);
+                dpi_fmax   (fncp_fire, dataa[i], datab[i], result_fmax[i], fflags_fmax[i]);
+                dpi_fsgnj  (fncp_fire, dataa[i], datab[i], result_fsgnj[i]);
+                dpi_fsgnjn (fncp_fire, dataa[i], datab[i], result_fsgnjn[i]);
+                dpi_fsgnjx (fncp_fire, dataa[i], datab[i], result_fsgnjx[i]);
                 result_fmv[i] = dataa[i];
             end
         end

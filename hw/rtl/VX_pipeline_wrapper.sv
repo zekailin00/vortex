@@ -17,47 +17,110 @@ module Vortex #(
     input         interrupts_meip,
     input         interrupts_seip,
 
-    input         imem_a_ready,
-    input         imem_d_valid,
-    input  [2:0]  imem_d_bits_opcode,
-    input  [1:0]  imem_d_bits_param,
-    input  [3:0]  imem_d_bits_size,
-    input  [9:0]  imem_d_bits_source,
-    input  [2:0]  imem_d_bits_sink,
-    input         imem_d_bits_denied,
-    input  [31:0] imem_d_bits_data,
-    input         imem_d_bits_corrupt,
-    output        imem_a_valid,
-    output [2:0]  imem_a_bits_opcode,
-    output [2:0]  imem_a_bits_param,
-    output [3:0]  imem_a_bits_size,
-    output [9:0]  imem_a_bits_source,
-    output [31:0] imem_a_bits_address,
-    output [3:0]  imem_a_bits_mask,
-    output [31:0] imem_a_bits_data,
-    output        imem_a_bits_corrupt,
-    output        imem_d_ready,
+    input         imem_0_a_ready,
+    input         imem_0_d_valid,
+    input  [2:0]  imem_0_d_bits_opcode,
+    input  [1:0]  imem_0_d_bits_param,
+    input  [3:0]  imem_0_d_bits_size,
+    input  [9:0]  imem_0_d_bits_source,
+    input  [2:0]  imem_0_d_bits_sink,
+    input         imem_0_d_bits_denied,
+    input  [31:0] imem_0_d_bits_data,
+    input         imem_0_d_bits_corrupt,
+    output        imem_0_a_valid,
+    output [2:0]  imem_0_a_bits_opcode,
+    output [2:0]  imem_0_a_bits_param,
+    output [3:0]  imem_0_a_bits_size,
+    output [9:0]  imem_0_a_bits_source,
+    output [31:0] imem_0_a_bits_address,
+    output [3:0]  imem_0_a_bits_mask,
+    output [31:0] imem_0_a_bits_data,
+    output        imem_0_a_bits_corrupt,
+    output        imem_0_d_ready,
 
-    input         dmem_a_ready,
-    input         dmem_d_valid,
-    input  [2:0]  dmem_d_bits_opcode,
-    input  [1:0]  dmem_d_bits_param,
-    input  [3:0]  dmem_d_bits_size,
-    input  [9:0]  dmem_d_bits_source,
-    input  [2:0]  dmem_d_bits_sink,
-    input         dmem_d_bits_denied,
-    input  [31:0] dmem_d_bits_data,
-    input         dmem_d_bits_corrupt,
-    output        dmem_a_valid,
-    output [2:0]  dmem_a_bits_opcode,
-    output [2:0]  dmem_a_bits_param,
-    output [3:0]  dmem_a_bits_size,
-    output [9:0]  dmem_a_bits_source,
-    output [31:0] dmem_a_bits_address,
-    output [3:0]  dmem_a_bits_mask,
-    output [31:0] dmem_a_bits_data,
-    output        dmem_a_bits_corrupt,
-    output        dmem_d_ready,
+    input         dmem_0_a_ready,
+    input         dmem_0_d_valid,
+    input  [2:0]  dmem_0_d_bits_opcode,
+    input  [1:0]  dmem_0_d_bits_param,
+    input  [3:0]  dmem_0_d_bits_size,
+    input  [9:0]  dmem_0_d_bits_source,
+    input  [2:0]  dmem_0_d_bits_sink,
+    input         dmem_0_d_bits_denied,
+    input  [31:0] dmem_0_d_bits_data,
+    input         dmem_0_d_bits_corrupt,
+    output        dmem_0_a_valid,
+    output [2:0]  dmem_0_a_bits_opcode,
+    output [2:0]  dmem_0_a_bits_param,
+    output [3:0]  dmem_0_a_bits_size,
+    output [9:0]  dmem_0_a_bits_source,
+    output [31:0] dmem_0_a_bits_address,
+    output [3:0]  dmem_0_a_bits_mask,
+    output [31:0] dmem_0_a_bits_data,
+    output        dmem_0_a_bits_corrupt,
+    output        dmem_0_d_ready,
+
+    input         dmem_1_a_ready,
+    input         dmem_1_d_valid,
+    input  [2:0]  dmem_1_d_bits_opcode,
+    input  [1:0]  dmem_1_d_bits_param,
+    input  [3:0]  dmem_1_d_bits_size,
+    input  [9:0]  dmem_1_d_bits_source,
+    input  [2:0]  dmem_1_d_bits_sink,
+    input         dmem_1_d_bits_denied,
+    input  [31:0] dmem_1_d_bits_data,
+    input         dmem_1_d_bits_corrupt,
+    output        dmem_1_a_valid,
+    output [2:0]  dmem_1_a_bits_opcode,
+    output [2:0]  dmem_1_a_bits_param,
+    output [3:0]  dmem_1_a_bits_size,
+    output [9:0]  dmem_1_a_bits_source,
+    output [31:0] dmem_1_a_bits_address,
+    output [3:0]  dmem_1_a_bits_mask,
+    output [31:0] dmem_1_a_bits_data,
+    output        dmem_1_a_bits_corrupt,
+    output        dmem_1_d_ready,
+
+    input         dmem_2_a_ready,
+    input         dmem_2_d_valid,
+    input  [2:0]  dmem_2_d_bits_opcode,
+    input  [1:0]  dmem_2_d_bits_param,
+    input  [3:0]  dmem_2_d_bits_size,
+    input  [9:0]  dmem_2_d_bits_source,
+    input  [2:0]  dmem_2_d_bits_sink,
+    input         dmem_2_d_bits_denied,
+    input  [31:0] dmem_2_d_bits_data,
+    input         dmem_2_d_bits_corrupt,
+    output        dmem_2_a_valid,
+    output [2:0]  dmem_2_a_bits_opcode,
+    output [2:0]  dmem_2_a_bits_param,
+    output [3:0]  dmem_2_a_bits_size,
+    output [9:0]  dmem_2_a_bits_source,
+    output [31:0] dmem_2_a_bits_address,
+    output [3:0]  dmem_2_a_bits_mask,
+    output [31:0] dmem_2_a_bits_data,
+    output        dmem_2_a_bits_corrupt,
+    output        dmem_2_d_ready,
+
+    input         dmem_3_a_ready,
+    input         dmem_3_d_valid,
+    input  [2:0]  dmem_3_d_bits_opcode,
+    input  [1:0]  dmem_3_d_bits_param,
+    input  [3:0]  dmem_3_d_bits_size,
+    input  [9:0]  dmem_3_d_bits_source,
+    input  [2:0]  dmem_3_d_bits_sink,
+    input         dmem_3_d_bits_denied,
+    input  [31:0] dmem_3_d_bits_data,
+    input         dmem_3_d_bits_corrupt,
+    output        dmem_3_a_valid,
+    output [2:0]  dmem_3_a_bits_opcode,
+    output [2:0]  dmem_3_a_bits_param,
+    output [3:0]  dmem_3_a_bits_size,
+    output [9:0]  dmem_3_a_bits_source,
+    output [31:0] dmem_3_a_bits_address,
+    output [3:0]  dmem_3_a_bits_mask,
+    output [31:0] dmem_3_a_bits_data,
+    output        dmem_3_a_bits_corrupt,
+    output        dmem_3_d_ready,
 
     input         fpu_fcsr_flags_valid,
     input  [4:0]  fpu_fcsr_flags_bits,
@@ -127,47 +190,65 @@ module Vortex #(
     end
 
     /* imem */
-    assign icache_rsp_if.valid = imem_d_valid;
-    assign icache_rsp_if.data = imem_d_bits_data;
-    assign icache_rsp_if.tag = imem_d_bits_source;
-    assign imem_d_ready = icache_rsp_if.ready;
+    assign icache_rsp_if.valid = imem_0_d_valid;
+    assign icache_rsp_if.data = imem_0_d_bits_data;
+    assign icache_rsp_if.tag = imem_0_d_bits_source;
+    assign imem_0_d_ready = icache_rsp_if.ready;
     // always @(posedge clock) begin
     //     if (icache_req_if.valid && icache_req_if.ready)
     //         icache_rsp_if.tag <= icache_req_if.tag;
     // end
-    assign imem_a_bits_source = icache_req_if.tag[9:0];
-    assign imem_a_valid = icache_req_if.valid;
-    assign imem_a_bits_address = {icache_req_if.addr, 2'b0};
-    assign icache_req_if.ready = imem_a_ready;
+    assign imem_0_a_bits_source = icache_req_if.tag[9:0];
+    assign imem_0_a_valid = icache_req_if.valid;
+    assign imem_0_a_bits_address = {icache_req_if.addr, 2'b0};
+    assign icache_req_if.ready = imem_0_a_ready;
 
-    assign imem_a_bits_data = 32'd0;
-    assign imem_a_bits_mask = 4'hf;
-    assign imem_a_bits_corrupt = 1'b0;
-    assign imem_a_bits_param = 3'd0;
-    assign imem_a_bits_size = 4'd2; // 32b
-    assign imem_a_bits_opcode = 3'd4; // Get
+    assign imem_0_a_bits_data = 32'd0;
+    assign imem_0_a_bits_mask = 4'hf;
+    assign imem_0_a_bits_corrupt = 1'b0;
+    assign imem_0_a_bits_param = 3'd0;
+    assign imem_0_a_bits_size = 4'd2; // 32b
+    assign imem_0_a_bits_opcode = 3'd4; // Get
 
     /* dmem */
-    assign dcache_rsp_if.valid = dmem_d_valid && (dmem_d_bits_opcode !== 'd0 /*AccessAck*/);
-    assign dcache_rsp_if.data = dmem_d_bits_data;
-    assign dcache_rsp_if.tag = dmem_d_bits_source;
-    // vortex expects tmask to be 0 for stores (nonzero tmask will attempt to pop nonexistent lsq entry)
-    assign dcache_rsp_if.tmask = dmem_d_bits_opcode === 'd0 /*AccessAck*/ ? 'h0 : 'hf;
-    assign dmem_d_ready = dcache_rsp_if.ready;
+    assign dcache_rsp_if.valid =
+        (dmem_3_d_valid && (dmem_3_d_bits_opcode !== 'd0 /*AccessAck*/)) ||
+        (dmem_2_d_valid && (dmem_2_d_bits_opcode !== 'd0 /*AccessAck*/)) ||
+        (dmem_1_d_valid && (dmem_1_d_bits_opcode !== 'd0 /*AccessAck*/)) ||
+        (dmem_0_d_valid && (dmem_0_d_bits_opcode !== 'd0 /*AccessAck*/));
+    assign dcache_rsp_if.data = {dmem_3_d_bits_data, dmem_2_d_bits_data, dmem_1_d_bits_data, dmem_0_d_bits_data};
 
-    assign dmem_a_valid = dcache_req_if.valid;
-    assign dmem_a_bits_address = {dcache_req_if.addr, 2'b0};
-    assign dmem_a_bits_source = dcache_req_if.tag[9:0];
-    assign dmem_a_bits_data = dcache_req_if.data;
-    assign dmem_a_bits_opcode = dcache_req_if.rw[0] ? (&dcache_req_if.byteen[0] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/)
-                                                    : 3'd4 /*Get*/; // rw = ~wb = store
-    assign dmem_a_bits_size = 2'd2; /* $countones(dcache_req_if.byteen[0]) === 'd4 ? 2'd2 :
+    logic [9:0] tag_d;
+    always @(*) begin
+        tag_d = '0;
+        for (integer i = 0; i < 4; i += 1) begin
+            if ({dmem_3_d_valid, dmem_2_d_valid, dmem_1_d_valid, dmem_0_d_valid}[i]) begin
+                tag_d = {dmem_3_d_bits_source, dmem_2_d_bits_source, dmem_1_d_bits_source, dmem_0_d_bits_source}[i * 10 +: 10];
+            end
+        end
+    end
+    assign dcache_rsp_if.tag = tag_d;
+    assign dcache_rsp_if.tmask = {dmem_3_d_valid, dmem_2_d_valid, dmem_1_d_valid, dmem_0_d_valid};
+    assign {dmem_3_d_ready, dmem_2_d_ready, dmem_1_d_ready, dmem_0_d_ready} = {4{dcache_rsp_if.ready}};
+
+    assign {dmem_3_a_valid, dmem_2_a_valid, dmem_1_a_valid, dmem_0_a_valid} = dcache_req_if.valid;
+    assign {dmem_3_a_bits_address, dmem_2_a_bits_address, dmem_1_a_bits_address, dmem_0_a_bits_address} =
+        {{dcache_req_if.addr[3], 2'b0}, {dcache_req_if.addr[2], 2'b0}, {dcache_req_if.addr[1], 2'b0}, {dcache_req_if.addr[0], 2'b0}};
+    assign {dmem_3_a_bits_source, dmem_2_a_bits_source, dmem_1_a_bits_source, dmem_0_a_bits_source} = dcache_req_if.tag;
+    assign {dmem_3_a_bits_data, dmem_2_a_bits_data, dmem_1_a_bits_data, dmem_0_a_bits_data} = dcache_req_if.data;
+    assign {dmem_3_a_bits_opcode, dmem_2_a_bits_opcode, dmem_1_a_bits_opcode, dmem_0_a_bits_opcode} = {
+        dcache_req_if.rw[3] ? (&dcache_req_if.byteen[3] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
+        dcache_req_if.rw[2] ? (&dcache_req_if.byteen[2] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
+        dcache_req_if.rw[1] ? (&dcache_req_if.byteen[1] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
+        dcache_req_if.rw[0] ? (&dcache_req_if.byteen[0] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/};
+        // NOTE: MAKE SURE TO CHANGE CONSTANT WIDTH FOR SIZE!
+    assign {dmem_3_a_bits_size, dmem_2_a_bits_size, dmem_1_a_bits_size, dmem_0_a_bits_size} = {4{4'd2}}; /* $countones(dcache_req_if.byteen[0]) === 'd4 ? 2'd2 :
         ($countones(dcache_req_if.byteen[0]) === 'd2 ? 2'd1 : 2'd0); */
-    assign dmem_a_bits_mask = dcache_req_if.byteen[0];
-    assign dcache_req_if.ready = dmem_a_ready;
+    assign {dmem_3_a_bits_mask, dmem_2_a_bits_mask, dmem_1_a_bits_mask, dmem_0_a_bits_mask} = dcache_req_if.byteen;
+    assign dcache_req_if.ready = {dmem_3_a_ready, dmem_2_a_ready, dmem_1_a_ready, dmem_0_a_ready};
 
-    assign dmem_a_bits_corrupt = 1'b0;
-    assign dmem_a_bits_param = 3'd0;
+    assign {dmem_3_a_bits_corrupt, dmem_2_a_bits_corrupt, dmem_1_a_bits_corrupt, dmem_0_a_bits_corrupt} = '0;
+    assign {dmem_3_a_bits_param, dmem_2_a_bits_param, dmem_1_a_bits_param, dmem_0_a_bits_param} = '0;
 
     /* fpu */
 
@@ -198,7 +279,9 @@ module Vortex #(
         .WORD_SIZE (`ICACHE_WORD_SIZE), 
         .TAG_WIDTH (`ICACHE_CORE_TAG_WIDTH)
     ) icache_rsp_if();
-    
+
+    logic busy;
+
     VX_pipeline #(
         .CORE_ID(CORE_ID)
     ) pipeline (
@@ -239,8 +322,52 @@ module Vortex #(
         .icache_rsp_ready   (icache_rsp_if.ready),
 
         // Status
-        .busy(/* ignored */)
-    );  
+        .busy(busy)
+    );
+
+    always @(*) begin
+        if (busy === 1'b0) begin
+            $display("no more active warps, wrapping up");
+
+            @(negedge clock);
+
+            // TODO: lane assumed to be 4
+            `ifndef SYNTHESIS
+            for (integer j = 0; j < `NUM_WARPS; j++) begin
+                $display("warp %2d thread 0", j);
+                for (integer k = 0; k < `NUM_REGS; k += 4)
+                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
+                        k + 0, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        k + 1, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
+                        k + 2, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
+                        k + 3, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
+                $display("warp %2d thread 1", j);
+                for (integer k = 0; k < `NUM_REGS; k += 4)
+                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
+                        k + 0, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        k + 1, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
+                        k + 2, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
+                        k + 3, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
+                $display("warp %2d thread 2", j);
+                for (integer k = 0; k < `NUM_REGS; k += 4)
+                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
+                        k + 0, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        k + 1, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
+                        k + 2, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
+                        k + 3, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
+                $display("warp %2d thread 3", j);
+                for (integer k = 0; k < `NUM_REGS; k += 4)
+                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
+                        k + 0, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        k + 1, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
+                        k + 2, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
+                        k + 3, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
+            end
+            `endif
+
+            @(posedge clock) $finish();
+        end
+    end
 
 endmodule : Vortex
 

@@ -32,7 +32,7 @@ module VX_gpr_stage #(
     assign raddr1 = {gpr_req_if.wid, gpr_req_if.rs1};
     assign raddr2 = {gpr_req_if.wid, gpr_req_if.rs2};
 
-    for (genvar i = 0; i < `NUM_THREADS; ++i) begin
+    for (genvar i = 0; i < `NUM_THREADS; ++i) begin : iports
         VX_dp_ram #(
             .DATAW       (32),
             .SIZE        (RAM_SIZE),
@@ -61,12 +61,12 @@ module VX_gpr_stage #(
             .rdata (gpr_rsp_if.rs2_data[i])
         );
     end
-    
+
 `ifdef EXT_F_ENABLE
     wire [$clog2(RAM_SIZE)-1:0] raddr3;
     assign raddr3 = {gpr_req_if.wid, gpr_req_if.rs3};    
 
-    for (genvar i = 0; i < `NUM_THREADS; ++i) begin
+    for (genvar i = 0; i < `NUM_THREADS; ++i) begin : fports
         VX_dp_ram #(
             .DATAW       (32),
             .SIZE        (RAM_SIZE),

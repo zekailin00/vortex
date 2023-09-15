@@ -332,6 +332,7 @@ module VX_lsu_unit #(
                                                          pending_reqs[i][1+64+`UUID_BITS+`NR_BITS +: 32], 
                                                          pending_reqs[i][1+64+`UUID_BITS +: `NR_BITS],
                                                          pending_reqs[i][1+64 +: `UUID_BITS]));
+                if (!(($time - pending_reqs[i][1 +: 64]) < delay_timeout)) #10000 $finish();
             end
         end
     end

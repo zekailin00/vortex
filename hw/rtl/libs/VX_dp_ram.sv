@@ -194,7 +194,7 @@ module VX_dp_ram #(
             end
         end
         assign rdata = rdata_r;
-    end else begin
+    end else begin : not_out_reg
         if (BYTEENW > 1) begin
             reg [BYTEENW-1:0][7:0] ram [SIZE-1:0];
             reg [DATAW-1:0] prev_data;
@@ -221,7 +221,7 @@ module VX_dp_ram #(
             end else begin
                 assign rdata = (prev_write && (prev_waddr == raddr)) ? prev_data : ram[raddr];
             end
-        end else begin
+        end else begin : reg_dump
             reg [DATAW-1:0] ram [SIZE-1:0];
             reg [DATAW-1:0] prev_data;
             reg [ADDRW-1:0] prev_waddr;
