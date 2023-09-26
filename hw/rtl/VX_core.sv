@@ -8,6 +8,7 @@ module VX_core #(
     // Clock
     input  wire                             clk,
     input  wire                             reset,
+    input  wire                             irq,
 
     // Memory request
     output wire                             mem_req_valid,
@@ -89,6 +90,7 @@ module VX_core #(
 
         .clk(clk),
         .reset(reset),
+        .irq(irq),
 
         // Dcache core request
         .dcache_req_valid   (dcache_req_if.valid),
