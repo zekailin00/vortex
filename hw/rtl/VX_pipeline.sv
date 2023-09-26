@@ -8,6 +8,7 @@ module VX_pipeline #(
     // Clock
     input wire                              clk,
     input wire                              reset,
+    input wire                              irq,
 
     // Dcache core request
     output wire [`NUM_THREADS-1:0]          dcache_req_valid,
@@ -205,6 +206,7 @@ module VX_pipeline #(
         
         .clk            (clk),
         .reset          (execute_reset),
+        .irq            (irq),
 
     `ifdef PERF_ENABLE
         .perf_memsys_if (perf_memsys_if),

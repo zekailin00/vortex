@@ -167,25 +167,21 @@ module Vortex #(
     input         traceStall,
     output        wfi
 );
-`ifdef PERF_ENABLE
-    VX_perf_memsys_if perf_memsys_if();
-`endif
 
     logic [3:0] intr_counter;
     logic msip_1d, intr_reset;
 
+    assign intr_reset = |intr_counter;
     /* interrupts */
     always @(posedge clock) begin
         msip_1d <= interrupts_msip;
-        if (~msip_1d && interrupts_msip) begin
+        if (reset) begin
+            intr_counter <= 4'h0;
+        end else if (~msip_1d && interrupts_msip) begin
             // rising edge
-            intr_counter <= 4'hf;
-            intr_reset <= 1'b1;
+            intr_counter <= 4'h6;
         end else begin
-            if (intr_counter !== 4'd0) begin
-                intr_counter <= intr_counter - 4'd1;
-                intr_reset <= 1'b1;
-            end else intr_reset <= 1'b0;
+            intr_counter <= intr_counter > 0 ? intr_counter - 4'h1 : 4'h0;
         end
     end
 
@@ -228,7 +224,11 @@ module Vortex #(
         end
     end
     assign dcache_rsp_if.tag = tag_d;
-    assign dcache_rsp_if.tmask = {dmem_3_d_valid, dmem_2_d_valid, dmem_1_d_valid, dmem_0_d_valid};
+    assign dcache_rsp_if.tmask = {
+        dmem_3_d_valid && (dmem_3_d_bits_opcode !== 'd0 /*AccessAck*/),
+        dmem_2_d_valid && (dmem_2_d_bits_opcode !== 'd0 /*AccessAck*/),
+        dmem_1_d_valid && (dmem_1_d_bits_opcode !== 'd0 /*AccessAck*/),
+        dmem_0_d_valid && (dmem_0_d_bits_opcode !== 'd0 /*AccessAck*/)};
     assign {dmem_3_d_ready, dmem_2_d_ready, dmem_1_d_ready, dmem_0_d_ready} = {4{dcache_rsp_if.ready}};
 
     assign {dmem_3_a_valid, dmem_2_a_valid, dmem_1_a_valid, dmem_0_a_valid} = dcache_req_if.valid;
@@ -256,7 +256,7 @@ module Vortex #(
             fpu_dmem_resp_tag, fpu_valid, fpu_killx, fpu_killm, fpu_keep_clock_enabled} = '0;
 
     assign cease = 1'b0;
-    assign wfi = 1'b0; // what is this?
+    assign wfi = 1'b0;
 
     VX_dcache_req_if #(
         .NUM_REQS  (`DCACHE_NUM_REQS),
@@ -291,7 +291,9 @@ module Vortex #(
     `endif
 
         .clk(clock),
-        .reset(reset || intr_reset),
+        .reset(reset),
+
+        .irq(intr_reset),
 
         // Dcache core request
         .dcache_req_valid   (dcache_req_if.valid),
@@ -334,35 +336,14 @@ module Vortex #(
             // TODO: lane assumed to be 4
             `ifndef SYNTHESIS
             for (integer j = 0; j < `NUM_WARPS; j++) begin
-                $display("warp %2d thread 0", j);
-                for (integer k = 0; k < `NUM_REGS; k += 4)
-                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
-                        k + 0, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        k + 1, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
-                        k + 2, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
-                        k + 3, pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
-                $display("warp %2d thread 1", j);
-                for (integer k = 0; k < `NUM_REGS; k += 4)
-                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
-                        k + 0, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        k + 1, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
-                        k + 2, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
-                        k + 3, pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
-                $display("warp %2d thread 2", j);
-                for (integer k = 0; k < `NUM_REGS; k += 4)
-                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
-                        k + 0, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        k + 1, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
-                        k + 2, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
-                        k + 3, pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
-                $display("warp %2d thread 3", j);
-                for (integer k = 0; k < `NUM_REGS; k += 4)
-                    $display("x%2d %08x   x%2d %08x   x%2d %08x   x%2d %08x",
-                        k + 0, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        k + 1, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 1],
-                        k + 2, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 2],
-                        k + 3, pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k + 3]);
-            end
+                $display("warp %2d", j);
+                for (integer k = 0; k < `NUM_REGS; k += 1)
+                    $display("x%2d: %08x  %08x  %08x  %08x", k,
+                        pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k]);
+                end
             `endif
 
             @(posedge clock) $finish();

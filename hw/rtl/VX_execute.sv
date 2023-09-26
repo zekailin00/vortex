@@ -6,7 +6,8 @@ module VX_execute #(
     `SCOPE_IO_VX_execute
 
     input wire clk, 
-    input wire reset,    
+    input wire reset,
+    input wire irq,
 
     // Dcache interface
     VX_dcache_req_if.master dcache_req_if,
@@ -142,6 +143,7 @@ module VX_execute #(
     ) alu_unit (
         .clk            (clk),
         .reset          (alu_reset),
+        .irq            (irq),
         .alu_req_if     (alu_req_if),
         .csr_to_alu_if  (csr_to_alu_if),
         .branch_ctl_if  (branch_ctl_if),

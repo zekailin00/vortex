@@ -32,6 +32,14 @@ module VX_gpr_stage #(
     assign raddr1 = {gpr_req_if.wid, gpr_req_if.rs1};
     assign raddr2 = {gpr_req_if.wid, gpr_req_if.rs2};
 
+    always @(posedge clk) begin
+        if (writeback_if.valid && writeback_if.ready) begin
+            // //       wid, pc ,tmsk, rd ,data
+            // $display("%d,%08x,%04b,%02x,%032x", writeback_if.wid, writeback_if.PC,
+            //          writeback_if.tmask, writeback_if.rd, writeback_if.data);
+        end
+    end
+
     for (genvar i = 0; i < `NUM_THREADS; ++i) begin : iports
         VX_dp_ram #(
             .DATAW       (32),
