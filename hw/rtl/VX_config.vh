@@ -56,9 +56,9 @@
 `endif
 
 `ifndef STARTUP_ADDR
-`define STARTUP_ADDR 32'h80000000
+// `define STARTUP_ADDR 32'h80000000
 // 0x10000 is the bootrom address
-//`define STARTUP_ADDR 32'h10000
+`define STARTUP_ADDR 32'h10100
 `endif
 
 `ifndef IO_BASE_ADDR
@@ -290,7 +290,7 @@
 
 // Size of Instruction Buffer
 `ifndef IBUF_SIZE
-`define IBUF_SIZE 2
+`define IBUF_SIZE (`NUM_WARPS * 2)
 `endif
 
 // Size of LSU Request Queue

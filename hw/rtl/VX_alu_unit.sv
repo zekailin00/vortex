@@ -5,6 +5,7 @@ module VX_alu_unit #(
 ) (
     input wire              clk,
     input wire              reset,
+    input wire              irq,
     
     // Inputs
     VX_alu_req_if.slave     alu_req_if,
@@ -135,10 +136,10 @@ module VX_alu_unit #(
     wire br_less   = `INST_BR_LESS(br_op_r);
     wire br_static = `INST_BR_STATIC(br_op_r);
 
-    assign branch_ctl_if.valid = alu_valid_out && alu_ready_out && is_br_op_r;
-    assign branch_ctl_if.taken = ((br_less ? is_less_r : is_equal_r) ^ br_neg) | br_static;
-    assign branch_ctl_if.wid   = alu_wid;
-    assign branch_ctl_if.dest  = br_dest_r;
+    assign branch_ctl_if.valid = irq || (alu_valid_out && alu_ready_out && is_br_op_r);
+    assign branch_ctl_if.taken = irq || (((br_less ? is_less_r : is_equal_r) ^ br_neg) | br_static);
+    assign branch_ctl_if.wid   = irq ? '0 : alu_wid;
+    assign branch_ctl_if.dest  = irq ? {`NUM_THREADS{csr_to_alu_if.csr_mtvec}} : br_dest_r;
 
 `ifdef EXT_M_ENABLE
 
