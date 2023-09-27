@@ -258,6 +258,19 @@ module Vortex #(
     assign cease = 1'b0;
     assign wfi = 1'b0;
 
+    always @(posedge clock) begin
+        for (integer i = 0; i < 4; i++) begin
+            if (dcache_req_if.valid[i] && dcache_req_if.ready[i] && dcache_req_if.rw[i]) begin
+                if ({dcache_req_if.addr[i], 2'b0}[31:28] == 4'hc) begin // heap address
+                    $display("[%d] STORE HEAP MEM: THREAD=%d, ADDRESS=0x%X, DATA=0x%08X", $time(), i, {dcache_req_if.addr[i], 2'b0}, dcache_req_if.data[i]);
+                end
+            end
+            // if (dcache_rsp_if.valid[i] && dcache_rsp_if.ready) begin
+            //     $display("LOAD MEM: THREAD=%d, DATA=0x%08X", i, dcache_req_if.data);
+            // end
+        end
+    end
+
     VX_dcache_req_if #(
         .NUM_REQS  (`DCACHE_NUM_REQS),
         .WORD_SIZE (`DCACHE_WORD_SIZE),
