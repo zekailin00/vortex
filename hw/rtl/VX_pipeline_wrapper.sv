@@ -185,6 +185,10 @@ module Vortex #(
         end
     end
 
+    // ------------------------------------------------------------------------
+    // TL <-> Vortex core-cache interface adapter
+    // ------------------------------------------------------------------------
+
     /* imem */
     assign icache_rsp_if.valid = imem_0_d_valid;
     assign icache_rsp_if.data = imem_0_d_bits_data;
@@ -214,6 +218,8 @@ module Vortex #(
         (dmem_0_d_valid && (dmem_0_d_bits_opcode !== 'd0 /*AccessAck*/));
     assign dcache_rsp_if.data = {dmem_3_d_bits_data, dmem_2_d_bits_data, dmem_1_d_bits_data, dmem_0_d_bits_data};
 
+    // get tag (source) from one of the valid dmem lanes; any is fine, use
+    // priority logic for simplicity
     logic [9:0] tag_d;
     always @(*) begin
         tag_d = '0;
@@ -224,6 +230,10 @@ module Vortex #(
         end
     end
     assign dcache_rsp_if.tag = tag_d;
+    // NOTE: Vortex dcache response has 1-bit valid, but uses thread mask to
+    // differentiate per-lane valids.  This is different from dcache request
+    // which uses per-lane N-bit valid.  In either case, the same tag is shared
+    // across all request/response lanes.
     assign dcache_rsp_if.tmask = {
         dmem_3_d_valid && (dmem_3_d_bits_opcode !== 'd0 /*AccessAck*/),
         dmem_2_d_valid && (dmem_2_d_bits_opcode !== 'd0 /*AccessAck*/),
@@ -257,6 +267,19 @@ module Vortex #(
 
     assign cease = 1'b0;
     assign wfi = 1'b0;
+
+    always @(posedge clock) begin
+        for (integer i = 0; i < 4; i++) begin
+            if (dcache_req_if.valid[i] && dcache_req_if.ready[i] && dcache_req_if.rw[i]) begin
+                if ({dcache_req_if.addr[i], 2'b0}[31:28] == 4'hc) begin // heap address
+                    $display("[%d] STORE HEAP MEM: THREAD=%d, ADDRESS=0x%X, DATA=0x%08X", $time(), i, {dcache_req_if.addr[i], 2'b0}, dcache_req_if.data[i]);
+                end
+            end
+            // if (dcache_rsp_if.valid[i] && dcache_rsp_if.ready) begin
+            //     $display("LOAD MEM: THREAD=%d, DATA=0x%08X", i, dcache_req_if.data);
+            // end
+        end
+    end
 
     VX_dcache_req_if #(
         .NUM_REQS  (`DCACHE_NUM_REQS),
