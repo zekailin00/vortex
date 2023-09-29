@@ -135,6 +135,21 @@ module Vortex #(
 
     assign cease = 1'b0;
     assign wfi = 1'b0;
+    logic [3:0] mask;
+    logic [31:0] word;
+    always @(posedge clock) begin
+        if (mem_req_if.valid && mem_req_if.ready && mem_req_if.rw) begin
+            if (mem_a_bits_address[31:28] == 4'hc) begin
+                for (integer i = 0; i < 4; i += 1) begin
+                    mask = mem_a_bits_mask >> (i * 4);
+                    word = mem_a_bits_data >> (i * 32);
+                    if (&mask) begin
+                        $display("[%d] STORE HEAP MEM: ADDRESS=0x%X, DATA=0x%08X", $time(), mem_a_bits_address, word);
+                    end
+                end
+            end
+        end
+    end
 
     VX_mem_req_if #(
         .DATA_WIDTH (`DCACHE_MEM_DATA_WIDTH),
@@ -189,7 +204,7 @@ module Vortex #(
             `ifndef SYNTHESIS
             for (integer j = 0; j < `NUM_WARPS; j++) begin
                 $display("warp %2d", j);
-                for (integer k = 0; k < `NUM_REGS; k += 1)
+                for (integer k = 0; k < `NUM_REGS; k += 1) begin
                     $display("x%2d: %08x  %08x  %08x  %08x", k,
                         core.pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
                         core.pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
