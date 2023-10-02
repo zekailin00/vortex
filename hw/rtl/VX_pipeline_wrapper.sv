@@ -192,13 +192,13 @@ module Vortex #(
     /* imem */
     assign icache_rsp_if.valid = imem_0_d_valid;
     assign icache_rsp_if.data = imem_0_d_bits_data;
-    assign icache_rsp_if.tag = imem_0_d_bits_source;
+    assign icache_rsp_if.tag = imem_0_d_bits_source[`ICACHE_CORE_TAG_WIDTH-1:0];
     assign imem_0_d_ready = icache_rsp_if.ready;
     // always @(posedge clock) begin
     //     if (icache_req_if.valid && icache_req_if.ready)
     //         icache_rsp_if.tag <= icache_req_if.tag;
     // end
-    assign imem_0_a_bits_source = icache_req_if.tag[9:0];
+    assign imem_0_a_bits_source = {32'b0, icache_req_if.tag}[9:0];
     assign imem_0_a_valid = icache_req_if.valid;
     assign imem_0_a_bits_address = {icache_req_if.addr, 2'b0};
     assign icache_req_if.ready = imem_0_a_ready;
