@@ -46,8 +46,9 @@
 `define SM_ENABLE 1
 `endif
 
+// external rocket-chip L2 has 16-byte cache lines
 `ifndef MEM_BLOCK_SIZE
-`define MEM_BLOCK_SIZE 64
+`define MEM_BLOCK_SIZE 16 
 `endif
 
 `ifndef L1_BLOCK_SIZE
@@ -56,7 +57,8 @@
 
 `ifndef STARTUP_ADDR
 // `define STARTUP_ADDR 32'h80000000
-// 0x10000 is the bootrom address
+// 0x10100 is the address of _hang100 section in bootrom.
+// see testchipip linker.ld
 `define STARTUP_ADDR 32'h10100
 `endif
 
@@ -326,7 +328,7 @@
 
 // Miss Handling Register Size
 `ifndef ICACHE_MSHR_SIZE
-`define ICACHE_MSHR_SIZE `NUM_WARPS
+`define ICACHE_MSHR_SIZE `NUM_WARPS // 4
 `endif
 
 // Memory Request Queue Size

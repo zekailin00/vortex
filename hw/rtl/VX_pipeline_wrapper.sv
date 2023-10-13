@@ -9,7 +9,7 @@ module Vortex #(
 
     input         clock,
     input         reset,
-    input         hartid,
+    // input         hartid,
     input  [31:0] reset_vector,
     input         interrupts_debug,
     input         interrupts_mtip,
@@ -122,45 +122,45 @@ module Vortex #(
     output        dmem_3_a_bits_corrupt,
     output        dmem_3_d_ready,
 
-    input         fpu_fcsr_flags_valid,
-    input  [4:0]  fpu_fcsr_flags_bits,
-    // input  [63:0] fpu_store_data,
-    input  [31:0] fpu_toint_data,
-    input         fpu_fcsr_rdy,
-    input         fpu_nack_mem,
-    input         fpu_illegal_rm,
-    input         fpu_dec_wen,
-    input         fpu_dec_ldst,
-    input         fpu_dec_ren1,
-    input         fpu_dec_ren2,
-    input         fpu_dec_ren3,
-    input         fpu_dec_swap12,
-    input         fpu_dec_swap23,
-    input  [1:0]  fpu_dec_typeTagIn,
-    input  [1:0]  fpu_dec_typeTagOut,
-    input         fpu_dec_fromint,
-    input         fpu_dec_toint,
-    input         fpu_dec_fastpipe,
-    input         fpu_dec_fma,
-    input         fpu_dec_div,
-    input         fpu_dec_sqrt,
-    input         fpu_dec_wflags,
-    input         fpu_sboard_set,
-    input         fpu_sboard_clr,
-    input  [4:0]  fpu_sboard_clra,
+    // input         fpu_fcsr_flags_valid,
+    // input  [4:0]  fpu_fcsr_flags_bits,
+    // // input  [63:0] fpu_store_data,
+    // input  [31:0] fpu_toint_data,
+    // input         fpu_fcsr_rdy,
+    // input         fpu_nack_mem,
+    // input         fpu_illegal_rm,
+    // input         fpu_dec_wen,
+    // input         fpu_dec_ldst,
+    // input         fpu_dec_ren1,
+    // input         fpu_dec_ren2,
+    // input         fpu_dec_ren3,
+    // input         fpu_dec_swap12,
+    // input         fpu_dec_swap23,
+    // input  [1:0]  fpu_dec_typeTagIn,
+    // input  [1:0]  fpu_dec_typeTagOut,
+    // input         fpu_dec_fromint,
+    // input         fpu_dec_toint,
+    // input         fpu_dec_fastpipe,
+    // input         fpu_dec_fma,
+    // input         fpu_dec_div,
+    // input         fpu_dec_sqrt,
+    // input         fpu_dec_wflags,
+    // input         fpu_sboard_set,
+    // input         fpu_sboard_clr,
+    // input  [4:0]  fpu_sboard_clra,
 
-    output        fpu_hartid,
-    output [31:0] fpu_time,
-    output [31:0] fpu_inst,
-    output [31:0] fpu_fromint_data,
-    output [2:0]  fpu_fcsr_rm,
-    output        fpu_dmem_resp_val,
-    output [2:0]  fpu_dmem_resp_type,
-    output [4:0]  fpu_dmem_resp_tag,
-    output        fpu_valid,
-    output        fpu_killx,
-    output        fpu_killm,
-    output        fpu_keep_clock_enabled,
+    // output        fpu_hartid,
+    // output [31:0] fpu_time,
+    // output [31:0] fpu_inst,
+    // output [31:0] fpu_fromint_data,
+    // output [2:0]  fpu_fcsr_rm,
+    // output        fpu_dmem_resp_val,
+    // output [2:0]  fpu_dmem_resp_type,
+    // output [4:0]  fpu_dmem_resp_tag,
+    // output        fpu_valid,
+    // output        fpu_killx,
+    // output        fpu_killm,
+    // output        fpu_keep_clock_enabled,
 
     output        cease,
 
@@ -186,16 +186,20 @@ module Vortex #(
         end
     end
 
+    // ------------------------------------------------------------------------
+    // TL <-> Vortex core-cache interface adapter
+    // ------------------------------------------------------------------------
+
     /* imem */
     assign icache_rsp_if.valid = imem_0_d_valid;
     assign icache_rsp_if.data = imem_0_d_bits_data;
-    assign icache_rsp_if.tag = imem_0_d_bits_source;
+    assign icache_rsp_if.tag = imem_0_d_bits_source[`ICACHE_CORE_TAG_WIDTH-1:0];
     assign imem_0_d_ready = icache_rsp_if.ready;
     // always @(posedge clock) begin
     //     if (icache_req_if.valid && icache_req_if.ready)
     //         icache_rsp_if.tag <= icache_req_if.tag;
     // end
-    assign imem_0_a_bits_source = icache_req_if.tag[9:0];
+    assign imem_0_a_bits_source = {32'b0, icache_req_if.tag}[9:0];
     assign imem_0_a_valid = icache_req_if.valid;
     assign imem_0_a_bits_address = {icache_req_if.addr, 2'b0};
     assign icache_req_if.ready = imem_0_a_ready;
@@ -215,6 +219,8 @@ module Vortex #(
         (dmem_0_d_valid && (dmem_0_d_bits_opcode !== 'd0 /*AccessAck*/));
     assign dcache_rsp_if.data = {dmem_3_d_bits_data, dmem_2_d_bits_data, dmem_1_d_bits_data, dmem_0_d_bits_data};
 
+    // get tag (source) from one of the valid dmem lanes; any is fine, use
+    // priority logic for simplicity
     logic [9:0] tag_d;
     always @(*) begin
         tag_d = '0;
@@ -225,6 +231,10 @@ module Vortex #(
         end
     end
     assign dcache_rsp_if.tag = tag_d;
+    // NOTE: Vortex dcache response has 1-bit valid, but uses thread mask to
+    // differentiate per-lane valids.  This is different from dcache request
+    // which uses per-lane N-bit valid.  In either case, the same tag is shared
+    // across all request/response lanes.
     assign dcache_rsp_if.tmask = {
         dmem_3_d_valid && (dmem_3_d_bits_opcode !== 'd0 /*AccessAck*/),
         dmem_2_d_valid && (dmem_2_d_bits_opcode !== 'd0 /*AccessAck*/),
@@ -253,8 +263,8 @@ module Vortex #(
 
     /* fpu */
 
-    assign {fpu_hartid, fpu_time, fpu_inst, fpu_fromint_data, fpu_fcsr_rm, fpu_dmem_resp_val, fpu_dmem_resp_type,
-            fpu_dmem_resp_tag, fpu_valid, fpu_killx, fpu_killm, fpu_keep_clock_enabled} = '0;
+    // assign {fpu_hartid, fpu_time, fpu_inst, fpu_fromint_data, fpu_fcsr_rm, fpu_dmem_resp_val, fpu_dmem_resp_type,
+    //         fpu_dmem_resp_tag, fpu_valid, fpu_killx, fpu_killm, fpu_keep_clock_enabled} = '0;
 
     assign cease = ~busy;
     assign wfi = 1'b0;
@@ -351,10 +361,10 @@ module Vortex #(
                 $display("warp %2d", j);
                 for (integer k = 0; k < `NUM_REGS; k += 1)
                     $display("x%2d: %08x  %08x  %08x  %08x", k,
-                        pipeline.issue.gpr_stage.iports[0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        pipeline.issue.gpr_stage.iports[1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        pipeline.issue.gpr_stage.iports[2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
-                        pipeline.issue.gpr_stage.iports[3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k]);
+                        pipeline.issue.gpr_stage.iports[/*thread*/0].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        pipeline.issue.gpr_stage.iports[/*thread*/1].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        pipeline.issue.gpr_stage.iports[/*thread*/2].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k],
+                        pipeline.issue.gpr_stage.iports[/*thread*/3].dp_ram1.not_out_reg.reg_dump.ram[j * `NUM_REGS + k]);
                 end
             `endif
 

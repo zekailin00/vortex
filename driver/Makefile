@@ -18,6 +18,9 @@ rtlsim:
 simx:
 	$(MAKE) -C simx
 
+socketsim:
+	$(MAKE) -C socketsim
+
 clean:
 	$(MAKE) clean -C stub
 	$(MAKE) clean -C fpga
@@ -25,5 +28,6 @@ clean:
 	$(MAKE) clean -C vlsim
 	$(MAKE) clean -C rtlsim
 	$(MAKE) clean -C simx
+	$(MAKE) clean -C socketsim
 
-.PHONY: all stub fpga asesim vlsim rtlsim simx clean
+.PHONY: all stub fpga asesim vlsim rtlsim simx socketsim clean
