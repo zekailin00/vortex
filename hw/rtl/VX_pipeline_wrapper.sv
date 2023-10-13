@@ -170,6 +170,7 @@ module Vortex #(
 
     logic [3:0] intr_counter;
     logic msip_1d, intr_reset;
+    logic busy;
 
     assign intr_reset = |intr_counter;
     /* interrupts */
@@ -255,7 +256,7 @@ module Vortex #(
     assign {fpu_hartid, fpu_time, fpu_inst, fpu_fromint_data, fpu_fcsr_rm, fpu_dmem_resp_val, fpu_dmem_resp_type,
             fpu_dmem_resp_tag, fpu_valid, fpu_killx, fpu_killm, fpu_keep_clock_enabled} = '0;
 
-    assign cease = 1'b0;
+    assign cease = ~busy;
     assign wfi = 1'b0;
 
     always @(posedge clock) begin
@@ -293,8 +294,6 @@ module Vortex #(
         .TAG_WIDTH (`ICACHE_CORE_TAG_WIDTH)
     ) icache_rsp_if();
 
-    logic busy;
-
     VX_pipeline #(
         .CORE_ID(CORE_ID)
     ) pipeline (
@@ -304,9 +303,9 @@ module Vortex #(
     `endif
 
         .clk(clock),
-        .reset(reset),
+        .reset(reset || intr_reset),
 
-        .irq(intr_reset),
+        .irq(1'b0/*intr_reset*/),
 
         // Dcache core request
         .dcache_req_valid   (dcache_req_if.valid),
@@ -342,7 +341,7 @@ module Vortex #(
 
     always @(*) begin
         if (busy === 1'b0) begin
-            $display("no more active warps, wrapping up");
+            $display("no more active warps");
 
             @(negedge clock);
 
@@ -359,7 +358,7 @@ module Vortex #(
                 end
             `endif
 
-            @(posedge clock) $finish();
+            // @(posedge clock) $finish();
         end
     end
 
