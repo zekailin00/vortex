@@ -9,8 +9,8 @@ show_usage()
 SCRIPT_DIR=$(dirname "$0")
 VORTEX_HOME=$SCRIPT_DIR/..
 
-DRIVER=vlsim
-APP=sgemm
+DRIVER=simx
+APP=vecadd
 CLUSTERS=1
 CORES=1
 WARPS=4
@@ -102,6 +102,9 @@ case $DRIVER in
     simx)
         DRIVER_PATH=$VORTEX_HOME/driver/simx
         DEBUG_LEVEL=3
+        ;;
+    socketsim)
+        DRIVER_PATH=$VORTEX_HOME/driver/socketsim
         ;;
     *)
         echo "invalid driver: $DRIVER"

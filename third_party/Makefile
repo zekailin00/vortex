@@ -12,9 +12,13 @@ ramulator:
 	cd ramulator && git apply ../../miscs/patch/ramulator.patch 2> /dev/null; true
 	$(MAKE) -C ramulator libramulator.a
 
+socketlib:
+	$(MAKE) -C socket-lib
+
 clean:
 	$(MAKE) -C cocogfx clean
 	$(MAKE) -C softfloat/build/Linux-x86_64-GCC clean
 	$(MAKE) -C ramulator clean
+	$(MAKE) -C socketlib clean
 
-.PHONY: all fpnew cocogfx softfloat ramulator
+.PHONY: all fpnew cocogfx softfloat ramulator socketlib
