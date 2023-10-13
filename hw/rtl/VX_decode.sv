@@ -479,17 +479,20 @@ module VX_decode  #(
     assign perf_decode_if.branches = perf_branches;
 `endif
 
-`ifdef DBG_TRACE_CORE_PIPELINE
+// `ifdef DBG_TRACE_CORE_PIPELINE
     always @(posedge clk) begin
         if (decode_if.valid && decode_if.ready) begin
-            dpi_trace("%d: core%0d-decode: wid=%0d, PC=%0h, ex=", $time, CORE_ID, decode_if.wid, decode_if.PC);
-            trace_ex_type(decode_if.ex_type);
-            dpi_trace(", op=");
-            trace_ex_op(decode_if.ex_type, decode_if.op_type, decode_if.op_mod);
-            dpi_trace(", mod=%0d, tmask=%b, wb=%b, rd=%0d, rs1=%0d, rs2=%0d, rs3=%0d, imm=%0h, use_pc=%b, use_imm=%b (#%0d)\n",
-                decode_if.op_mod, decode_if.tmask, decode_if.wb, decode_if.rd, decode_if.rs1, decode_if.rs2, decode_if.rs3, decode_if.imm, decode_if.use_PC, decode_if.use_imm, decode_if.uuid);
+            if (decode_if.PC >= 32'h80000000) begin
+              $display("%d: core%0d-decode: wid=%0d, PC=%0h, ex=", $time, CORE_ID, decode_if.wid, decode_if.PC);
+            end
+            // dpi_trace("%d: core%0d-decode: wid=%0d, PC=%0h, ex=", $time, CORE_ID, decode_if.wid, decode_if.PC);
+            // trace_ex_type(decode_if.ex_type);
+            // dpi_trace(", op=");
+            // trace_ex_op(decode_if.ex_type, decode_if.op_type, decode_if.op_mod);
+            // dpi_trace(", mod=%0d, tmask=%b, wb=%b, rd=%0d, rs1=%0d, rs2=%0d, rs3=%0d, imm=%0h, use_pc=%b, use_imm=%b (#%0d)\n",
+            //     decode_if.op_mod, decode_if.tmask, decode_if.wb, decode_if.rd, decode_if.rs1, decode_if.rs2, decode_if.rs3, decode_if.imm, decode_if.use_PC, decode_if.use_imm, decode_if.uuid);
         end
     end
-`endif
+// `endif
 
 endmodule
