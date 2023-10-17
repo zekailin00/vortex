@@ -20,22 +20,22 @@ module Vortex #(
     input         imem_0_a_ready,
     input         imem_0_d_valid,
     input  [2:0]  imem_0_d_bits_opcode,
-    input  [1:0]  imem_0_d_bits_param,
+    // input  [1:0]  imem_0_d_bits_param,
     input  [3:0]  imem_0_d_bits_size,
     input  [9:0]  imem_0_d_bits_source,
-    input  [2:0]  imem_0_d_bits_sink,
-    input         imem_0_d_bits_denied,
+    // input  [2:0]  imem_0_d_bits_sink,
+    // input         imem_0_d_bits_denied,
     input  [31:0] imem_0_d_bits_data,
-    input         imem_0_d_bits_corrupt,
+    // input         imem_0_d_bits_corrupt,
     output        imem_0_a_valid,
     output [2:0]  imem_0_a_bits_opcode,
-    output [2:0]  imem_0_a_bits_param,
+    // output [2:0]  imem_0_a_bits_param,
     output [3:0]  imem_0_a_bits_size,
     output [9:0]  imem_0_a_bits_source,
     output [31:0] imem_0_a_bits_address,
     output [3:0]  imem_0_a_bits_mask,
     output [31:0] imem_0_a_bits_data,
-    output        imem_0_a_bits_corrupt,
+    // output        imem_0_a_bits_corrupt,
     output        imem_0_d_ready,
 
     input         dmem_0_a_ready,
@@ -206,8 +206,8 @@ module Vortex #(
 
     assign imem_0_a_bits_data = 32'd0;
     assign imem_0_a_bits_mask = 4'hf;
-    assign imem_0_a_bits_corrupt = 1'b0;
-    assign imem_0_a_bits_param = 3'd0;
+    // assign imem_0_a_bits_corrupt = 1'b0;
+    // assign imem_0_a_bits_param = 3'd0;
     assign imem_0_a_bits_size = 4'd2; // 32b
     assign imem_0_a_bits_opcode = 3'd4; // Get
 
