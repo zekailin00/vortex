@@ -41,85 +41,85 @@ module Vortex #(
     input         dmem_0_a_ready,
     input         dmem_0_d_valid,
     input  [2:0]  dmem_0_d_bits_opcode,
-    input  [1:0]  dmem_0_d_bits_param,
+    // input  [1:0]  dmem_0_d_bits_param,
     input  [3:0]  dmem_0_d_bits_size,
     input  [9:0]  dmem_0_d_bits_source,
-    input  [2:0]  dmem_0_d_bits_sink,
-    input         dmem_0_d_bits_denied,
+    // input  [2:0]  dmem_0_d_bits_sink,
+    // input         dmem_0_d_bits_denied,
     input  [31:0] dmem_0_d_bits_data,
-    input         dmem_0_d_bits_corrupt,
+    // input         dmem_0_d_bits_corrupt,
     output        dmem_0_a_valid,
     output [2:0]  dmem_0_a_bits_opcode,
-    output [2:0]  dmem_0_a_bits_param,
+    // output [2:0]  dmem_0_a_bits_param,
     output [3:0]  dmem_0_a_bits_size,
     output [9:0]  dmem_0_a_bits_source,
     output [31:0] dmem_0_a_bits_address,
     output [3:0]  dmem_0_a_bits_mask,
     output [31:0] dmem_0_a_bits_data,
-    output        dmem_0_a_bits_corrupt,
+    // output        dmem_0_a_bits_corrupt,
     output        dmem_0_d_ready,
 
     input         dmem_1_a_ready,
     input         dmem_1_d_valid,
     input  [2:0]  dmem_1_d_bits_opcode,
-    input  [1:0]  dmem_1_d_bits_param,
+    // input  [1:0]  dmem_1_d_bits_param,
     input  [3:0]  dmem_1_d_bits_size,
     input  [9:0]  dmem_1_d_bits_source,
-    input  [2:0]  dmem_1_d_bits_sink,
-    input         dmem_1_d_bits_denied,
+    // input  [2:0]  dmem_1_d_bits_sink,
+    // input         dmem_1_d_bits_denied,
     input  [31:0] dmem_1_d_bits_data,
-    input         dmem_1_d_bits_corrupt,
+    // input         dmem_1_d_bits_corrupt,
     output        dmem_1_a_valid,
     output [2:0]  dmem_1_a_bits_opcode,
-    output [2:0]  dmem_1_a_bits_param,
+    // output [2:0]  dmem_1_a_bits_param,
     output [3:0]  dmem_1_a_bits_size,
     output [9:0]  dmem_1_a_bits_source,
     output [31:0] dmem_1_a_bits_address,
     output [3:0]  dmem_1_a_bits_mask,
     output [31:0] dmem_1_a_bits_data,
-    output        dmem_1_a_bits_corrupt,
+    // output        dmem_1_a_bits_corrupt,
     output        dmem_1_d_ready,
 
     input         dmem_2_a_ready,
     input         dmem_2_d_valid,
     input  [2:0]  dmem_2_d_bits_opcode,
-    input  [1:0]  dmem_2_d_bits_param,
+    // input  [1:0]  dmem_2_d_bits_param,
     input  [3:0]  dmem_2_d_bits_size,
     input  [9:0]  dmem_2_d_bits_source,
-    input  [2:0]  dmem_2_d_bits_sink,
-    input         dmem_2_d_bits_denied,
+    // input  [2:0]  dmem_2_d_bits_sink,
+    // input         dmem_2_d_bits_denied,
     input  [31:0] dmem_2_d_bits_data,
-    input         dmem_2_d_bits_corrupt,
+    // input         dmem_2_d_bits_corrupt,
     output        dmem_2_a_valid,
     output [2:0]  dmem_2_a_bits_opcode,
-    output [2:0]  dmem_2_a_bits_param,
+    // output [2:0]  dmem_2_a_bits_param,
     output [3:0]  dmem_2_a_bits_size,
     output [9:0]  dmem_2_a_bits_source,
     output [31:0] dmem_2_a_bits_address,
     output [3:0]  dmem_2_a_bits_mask,
     output [31:0] dmem_2_a_bits_data,
-    output        dmem_2_a_bits_corrupt,
+    // output        dmem_2_a_bits_corrupt,
     output        dmem_2_d_ready,
 
     input         dmem_3_a_ready,
     input         dmem_3_d_valid,
     input  [2:0]  dmem_3_d_bits_opcode,
-    input  [1:0]  dmem_3_d_bits_param,
+    // input  [1:0]  dmem_3_d_bits_param,
     input  [3:0]  dmem_3_d_bits_size,
     input  [9:0]  dmem_3_d_bits_source,
-    input  [2:0]  dmem_3_d_bits_sink,
-    input         dmem_3_d_bits_denied,
+    // input  [2:0]  dmem_3_d_bits_sink,
+    // input         dmem_3_d_bits_denied,
     input  [31:0] dmem_3_d_bits_data,
-    input         dmem_3_d_bits_corrupt,
+    // input         dmem_3_d_bits_corrupt,
     output        dmem_3_a_valid,
     output [2:0]  dmem_3_a_bits_opcode,
-    output [2:0]  dmem_3_a_bits_param,
+    // output [2:0]  dmem_3_a_bits_param,
     output [3:0]  dmem_3_a_bits_size,
     output [9:0]  dmem_3_a_bits_source,
     output [31:0] dmem_3_a_bits_address,
     output [3:0]  dmem_3_a_bits_mask,
     output [31:0] dmem_3_a_bits_data,
-    output        dmem_3_a_bits_corrupt,
+    // output        dmem_3_a_bits_corrupt,
     output        dmem_3_d_ready,
 
     // input         fpu_fcsr_flags_valid,
@@ -246,6 +246,13 @@ module Vortex #(
     assign {dmem_3_a_bits_address, dmem_2_a_bits_address, dmem_1_a_bits_address, dmem_0_a_bits_address} =
         {{dcache_req_if.addr[3], 2'b0}, {dcache_req_if.addr[2], 2'b0}, {dcache_req_if.addr[1], 2'b0}, {dcache_req_if.addr[0], 2'b0}};
     assign {dmem_3_a_bits_source, dmem_2_a_bits_source, dmem_1_a_bits_source, dmem_0_a_bits_source} = dcache_req_if.tag;
+    // we assume all lanes always have the same tag; otherwise the sourceId
+    // logic in the Chisel tile breaks
+    // always @(*) begin
+    //   for (i = 0; i < 4; i++) begin
+    //     assert(dcache_req_if.tag[0] == dcache_req_if.tag[i])
+    //   end
+    // end
     assign {dmem_3_a_bits_data, dmem_2_a_bits_data, dmem_1_a_bits_data, dmem_0_a_bits_data} = dcache_req_if.data;
     assign {dmem_3_a_bits_opcode, dmem_2_a_bits_opcode, dmem_1_a_bits_opcode, dmem_0_a_bits_opcode} = {
         dcache_req_if.rw[3] ? (&dcache_req_if.byteen[3] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
@@ -258,8 +265,8 @@ module Vortex #(
     assign {dmem_3_a_bits_mask, dmem_2_a_bits_mask, dmem_1_a_bits_mask, dmem_0_a_bits_mask} = dcache_req_if.byteen;
     assign dcache_req_if.ready = {dmem_3_a_ready, dmem_2_a_ready, dmem_1_a_ready, dmem_0_a_ready};
 
-    assign {dmem_3_a_bits_corrupt, dmem_2_a_bits_corrupt, dmem_1_a_bits_corrupt, dmem_0_a_bits_corrupt} = '0;
-    assign {dmem_3_a_bits_param, dmem_2_a_bits_param, dmem_1_a_bits_param, dmem_0_a_bits_param} = '0;
+    // assign {dmem_3_a_bits_corrupt, dmem_2_a_bits_corrupt, dmem_1_a_bits_corrupt, dmem_0_a_bits_corrupt} = '0;
+    // assign {dmem_3_a_bits_param, dmem_2_a_bits_param, dmem_1_a_bits_param, dmem_0_a_bits_param} = '0;
 
     /* fpu */
 

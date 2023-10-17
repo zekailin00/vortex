@@ -128,6 +128,7 @@ module VX_lsu_unit #(
 
     wire [`NUM_THREADS-1:0] req_tmask_dup = req_tmask & {{(`NUM_THREADS-1){~req_is_dup}}, 1'b1};
 
+    // NOTE(hansung): writes do not acquire new LSQ unit
     wire mbuf_push = ~mbuf_full
                   && (| ({`NUM_THREADS{req_valid}} & req_tmask_dup & dcache_req_if.ready))
                   && is_req_start   // first submission only                  
@@ -141,6 +142,7 @@ module VX_lsu_unit #(
     // do not writeback from software prefetch
     wire req_wb2 = req_wb && ~req_is_prefetch;
 
+    // NOTE(hansung): main LSQ RAM structure
     VX_index_buffer #(
         .DATAW (`UUID_BITS + `NW_BITS + 32 + `NUM_THREADS + `NR_BITS + 1 + `INST_LSU_BITS + (`NUM_THREADS * REQ_ASHIFT) + 1 + 1),
         .SIZE  (`LSUQ_SIZE)
