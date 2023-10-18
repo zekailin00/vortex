@@ -213,10 +213,10 @@ module Vortex #(
 
     /* dmem */
     assign dcache_rsp_if.valid =
-        (dmem_3_d_valid && (dmem_3_d_bits_opcode !== 'd0 /*AccessAck*/)) ||
-        (dmem_2_d_valid && (dmem_2_d_bits_opcode !== 'd0 /*AccessAck*/)) ||
-        (dmem_1_d_valid && (dmem_1_d_bits_opcode !== 'd0 /*AccessAck*/)) ||
-        (dmem_0_d_valid && (dmem_0_d_bits_opcode !== 'd0 /*AccessAck*/));
+        (dmem_3_d_valid && (dmem_3_d_bits_opcode !== 3'd0 /*AccessAck*/)) ||
+        (dmem_2_d_valid && (dmem_2_d_bits_opcode !== 3'd0 /*AccessAck*/)) ||
+        (dmem_1_d_valid && (dmem_1_d_bits_opcode !== 3'd0 /*AccessAck*/)) ||
+        (dmem_0_d_valid && (dmem_0_d_bits_opcode !== 3'd0 /*AccessAck*/));
     assign dcache_rsp_if.data = {dmem_3_d_bits_data, dmem_2_d_bits_data, dmem_1_d_bits_data, dmem_0_d_bits_data};
 
     // get tag (source) from one of the valid dmem lanes; any is fine, use
@@ -236,10 +236,10 @@ module Vortex #(
     // which uses per-lane N-bit valid.  In either case, the same tag is shared
     // across all request/response lanes.
     assign dcache_rsp_if.tmask = {
-        dmem_3_d_valid && (dmem_3_d_bits_opcode !== 'd0 /*AccessAck*/),
-        dmem_2_d_valid && (dmem_2_d_bits_opcode !== 'd0 /*AccessAck*/),
-        dmem_1_d_valid && (dmem_1_d_bits_opcode !== 'd0 /*AccessAck*/),
-        dmem_0_d_valid && (dmem_0_d_bits_opcode !== 'd0 /*AccessAck*/)};
+        dmem_3_d_valid && (dmem_3_d_bits_opcode !== 3'd0 /*AccessAck*/),
+        dmem_2_d_valid && (dmem_2_d_bits_opcode !== 3'd0 /*AccessAck*/),
+        dmem_1_d_valid && (dmem_1_d_bits_opcode !== 3'd0 /*AccessAck*/),
+        dmem_0_d_valid && (dmem_0_d_bits_opcode !== 3'd0 /*AccessAck*/)};
     assign {dmem_3_d_ready, dmem_2_d_ready, dmem_1_d_ready, dmem_0_d_ready} = {4{dcache_rsp_if.ready}};
 
     assign {dmem_3_a_valid, dmem_2_a_valid, dmem_1_a_valid, dmem_0_a_valid} = dcache_req_if.valid;
