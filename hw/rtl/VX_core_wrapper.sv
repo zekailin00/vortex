@@ -136,17 +136,25 @@ module Vortex #(
 
     assign cease = ~busy;
     assign wfi = 1'b0;
+
+    // Log writes to heap memory.
+    // L1 is a write-through cache, so logging at the L1-L2 boundary can still
+    // catch all writes in software.
     logic [3:0] mask;
     logic [31:0] word;
+    logic [31:0] addr;
     always @(posedge clock) begin
         if (mem_req_if.valid && mem_req_if.ready && mem_req_if.rw) begin
+            // filter out store to heap address 0xc*******
             if (mem_a_bits_address[31:28] == 4'hc) begin
                 for (integer i = 0; i < 4; i += 1) begin
                     mask = mem_a_bits_mask >> (i * 4);
                     word = mem_a_bits_data >> (i * 32);
+                    addr = mem_a_bits_address + (i * 4);
                     if (&mask) begin
-                        $display("[%d] STORE HEAP MEM: ADDRESS=0x%X, DATA=0x%08X", $time(), mem_a_bits_address, word);
+                        $display("[%d] STORE HEAP MEM: THREAD=%d, ADDRESS=0x%X, DATA=0x%08X", $time(), i, addr, word);
                     end
+                    $display("[%d] DEBUG MEM: THREAD=%d, ADDRESS=0x%X, MASK=0x%X, DATA=0x%08X", $time(), i, mem_a_bits_address, mem_a_bits_mask, mem_a_bits_data);
                 end
             end
         end
@@ -213,7 +221,7 @@ module Vortex #(
             end
             `endif
 
-            @(posedge clock) $finish();
+            // @(posedge clock) $finish();
         end
     end
 
