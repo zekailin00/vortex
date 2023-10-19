@@ -20,22 +20,16 @@ module Vortex #(
     input          mem_a_ready,
     input          mem_d_valid,
     input  [2:0]   mem_d_bits_opcode,
-    input  [1:0]   mem_d_bits_param,
     input  [3:0]   mem_d_bits_size,
     input  [14:0]  mem_d_bits_source,
-    input  [2:0]   mem_d_bits_sink,
-    input          mem_d_bits_denied,
     input  [127:0] mem_d_bits_data,
-    input          mem_d_bits_corrupt,
     output         mem_a_valid,
     output [2:0]   mem_a_bits_opcode,
-    output [2:0]   mem_a_bits_param,
     output [3:0]   mem_a_bits_size,
     output [14:0]  mem_a_bits_source,
     output [31:0]  mem_a_bits_address,
     output [15:0]  mem_a_bits_mask,
     output [127:0] mem_a_bits_data,
-    output         mem_a_bits_corrupt,
     output         mem_d_ready,
 
     input          fpu_fcsr_flags_valid,
@@ -125,9 +119,6 @@ module Vortex #(
     // TODO: is this necessary? only has to be "naturally aligned" whatever that means
     assign mem_a_bits_mask = mem_req_if.rw ? mem_req_if.byteen : '1; 
     assign mem_req_if.ready = mem_a_ready;
-
-    assign mem_a_bits_corrupt = '0;
-    assign mem_a_bits_param = '0;
 
     /* fpu */
 
