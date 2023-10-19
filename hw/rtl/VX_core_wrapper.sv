@@ -99,7 +99,7 @@ module Vortex #(
 
     /* dmem */
     assign mem_rsp_if.valid =
-        (mem_d_valid && (mem_d_bits_opcode !== 'd0 /*AccessAck*/));
+        (mem_d_valid && (mem_d_bits_opcode !== 3'd0 /*AccessAck*/));
     assign mem_rsp_if.data = mem_d_bits_data;
 
     assign mem_rsp_if.tag = mem_d_bits_source;
@@ -139,8 +139,8 @@ module Vortex #(
             // filter out store to heap address 0xc*******
             if (mem_a_bits_address[31:28] == 4'hc) begin
                 for (integer i = 0; i < 4; i += 1) begin
-                    mask = mem_a_bits_mask >> (i * 4);
-                    word = mem_a_bits_data >> (i * 32);
+                    mask = mem_a_bits_mask[i * 4 +: 4];
+                    word = mem_a_bits_data[i * 32 +: 32];
                     addr = mem_a_bits_address + (i * 4);
                     if (&mask) begin
                         $display("[%d] STORE HEAP MEM: THREAD=%d, ADDRESS=0x%X, DATA=0x%08X", $time(), i, addr, word);
