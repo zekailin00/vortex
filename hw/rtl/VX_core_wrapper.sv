@@ -86,6 +86,7 @@ module Vortex #(
 
     logic [3:0] intr_counter;
     logic msip_1d, intr_reset;
+    logic busy;
 
     assign intr_reset = |intr_counter;
 
@@ -133,7 +134,7 @@ module Vortex #(
     assign {fpu_hartid, fpu_time, fpu_inst, fpu_fromint_data, fpu_fcsr_rm, fpu_dmem_resp_val, fpu_dmem_resp_type,
             fpu_dmem_resp_tag, fpu_valid, fpu_killx, fpu_killm, fpu_keep_clock_enabled} = '0;
 
-    assign cease = 1'b0;
+    assign cease = ~busy;
     assign wfi = 1'b0;
     logic [3:0] mask;
     logic [31:0] word;
@@ -162,8 +163,6 @@ module Vortex #(
         .TAG_WIDTH  (`L1_MEM_TAG_WIDTH)
     ) mem_rsp_if();
 
-    logic busy;
-
     VX_core #(
         .CORE_ID(CORE_ID)
     ) core (
@@ -173,8 +172,8 @@ module Vortex #(
     `endif
 
         .clk(clock),
-        .reset(reset),
-        .irq(intr_reset),
+        .reset(reset || intr_reset),
+        .irq(1'b0/*intr_reset*/),
         
         // Memory request
         .mem_req_valid(mem_req_if.valid),
