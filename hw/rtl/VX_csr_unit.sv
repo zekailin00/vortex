@@ -150,4 +150,15 @@ module VX_csr_unit #(
     end
     assign pending = pending_r;
 
+`ifndef SYNTHESIS
+    always @(posedge clk) begin
+        for (integer i = 0; i < `NUM_THREADS; i++) begin
+            if (csr_commit_if.valid && csr_commit_if.ready) begin
+                $display("[%d] CSR READ: CORE=%d, THREAD=%d, PC=0x%08X, RD=0x%X, CSR=0x%X, VALUE=0x%X",
+                  $time(), CORE_ID, i, csr_commit_if.PC, csr_commit_if.rd, csr_addr_s1, csr_commit_if.data[i]);
+            end
+        end
+    end
+`endif
+
 endmodule
