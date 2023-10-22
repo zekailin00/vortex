@@ -209,8 +209,12 @@ module VX_issue #(
         if (alu_req_if.valid && alu_req_if.ready) begin
             // PC comparison is a workaround to skip the bootrom part
             if (alu_req_if.PC >= 32'h80000000) begin
-                $display("%d: core%0d-issue: wid=%0d, PC=%0x, ex=ALU, tmask=%b, rd=%0d",
+                $write("%d: core%0d-issue: wid=%0d, PC=%0h, ex=ALU, tmask=%b, rd=%0d, rs1_data=", 
                     $time, CORE_ID, alu_req_if.wid, alu_req_if.PC, alu_req_if.tmask, alu_req_if.rd);
+                `MY_TRACE_ARRAY1D(alu_req_if.rs1_data, `NUM_THREADS);
+                $write(", rs2_data=");
+                `MY_TRACE_ARRAY1D(alu_req_if.rs2_data, `NUM_THREADS);
+                $write(" (#%0d)\n", alu_req_if.uuid);
             end
             // dpi_trace("%d: core%0d-issue: wid=%0d, PC=%0h, ex=ALU, tmask=%b, rd=%0d, rs1_data=", 
             //     $time, CORE_ID, alu_req_if.wid, alu_req_if.PC, alu_req_if.tmask, alu_req_if.rd);
@@ -221,8 +225,12 @@ module VX_issue #(
         end
         if (lsu_req_if.valid && lsu_req_if.ready) begin
             if (lsu_req_if.PC >= 32'h80000000) begin
-                $display("%d: core%0d-issue: wid=%0d, PC=%0x, ex=LSU, tmask=%b, rd=%0d, offset=%0x",
+                $write("%d: core%0d-issue: wid=%0d, PC=%0h, ex=LSU, tmask=%b, rd=%0d, offset=%0h, addr=", 
                     $time, CORE_ID, lsu_req_if.wid, lsu_req_if.PC, lsu_req_if.tmask, lsu_req_if.rd, lsu_req_if.offset); 
+                `MY_TRACE_ARRAY1D(lsu_req_if.base_addr, `NUM_THREADS);
+                $write(", data=");
+                `MY_TRACE_ARRAY1D(lsu_req_if.store_data, `NUM_THREADS);
+                $write(" (#%0d)\n", lsu_req_if.uuid);
             end
             // dpi_trace("%d: core%0d-issue: wid=%0d, PC=%0h, ex=LSU, tmask=%b, rd=%0d, offset=%0h, addr=", 
             //     $time, CORE_ID, lsu_req_if.wid, lsu_req_if.PC, lsu_req_if.tmask, lsu_req_if.rd, lsu_req_if.offset); 

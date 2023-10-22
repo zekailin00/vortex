@@ -131,6 +131,14 @@
     end                                         \
     dpi_trace("}");                             \
 
+`define MY_TRACE_ARRAY1D(a, m)                  \
+    $write("{");                              \
+    for (integer i = (m-1); i >= 0; --i) begin  \
+        if (i != (m-1)) $write(", ");         \
+        $write("0x%0h", a[i]);                \
+    end                                         \
+    $write("}");                              \
+
 `define TRACE_ARRAY2D(a, m, n)                  \
     dpi_trace("{");                             \
     for (integer i = n-1; i >= 0; --i) begin    \
