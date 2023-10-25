@@ -255,10 +255,10 @@ module Vortex #(
     // end
     assign {dmem_3_a_bits_data, dmem_2_a_bits_data, dmem_1_a_bits_data, dmem_0_a_bits_data} = dcache_req_if.data;
     assign {dmem_3_a_bits_opcode, dmem_2_a_bits_opcode, dmem_1_a_bits_opcode, dmem_0_a_bits_opcode} = {
-        dcache_req_if.rw[3] ? (&dcache_req_if.byteen[3] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
-        dcache_req_if.rw[2] ? (&dcache_req_if.byteen[2] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
-        dcache_req_if.rw[1] ? (&dcache_req_if.byteen[1] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/,
-        dcache_req_if.rw[0] ? (&dcache_req_if.byteen[0] ? 3'd0 /*PutFull*/ : 3'd1 /*PutPartial*/) : 3'd4 /*Get*/};
+        dcache_req_if.rw[3] ? (&dcache_req_if.byteen[3] ? 3'd0 /*PutFull*/ : 3'd0 /*FIXME: PutPartial but spoofed to PutFull*/) : 3'd4 /*Get*/,
+        dcache_req_if.rw[2] ? (&dcache_req_if.byteen[2] ? 3'd0 /*PutFull*/ : 3'd0 /*FIXME: PutPartial but spoofed to PutFull*/) : 3'd4 /*Get*/,
+        dcache_req_if.rw[1] ? (&dcache_req_if.byteen[1] ? 3'd0 /*PutFull*/ : 3'd0 /*FIXME: PutPartial but spoofed to PutFull*/) : 3'd4 /*Get*/,
+        dcache_req_if.rw[0] ? (&dcache_req_if.byteen[0] ? 3'd0 /*PutFull*/ : 3'd0 /*FIXME: PutPartial but spoofed to PutFull*/) : 3'd4 /*Get*/};
         // NOTE: MAKE SURE TO CHANGE CONSTANT WIDTH FOR SIZE!
     assign {dmem_3_a_bits_size, dmem_2_a_bits_size, dmem_1_a_bits_size, dmem_0_a_bits_size} = {4{4'd2}}; /* $countones(dcache_req_if.byteen[0]) === 'd4 ? 2'd2 :
         ($countones(dcache_req_if.byteen[0]) === 'd2 ? 2'd1 : 2'd0); */
