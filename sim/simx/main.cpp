@@ -58,17 +58,17 @@ int main(int argc, char **argv) {
     RAM ram(RAM_PAGE_SIZE);
 
     // load program
-    {
-      std::string program_ext(fileExtension(imgFileName.c_str()));
-      if (program_ext == "bin") {
-        ram.loadBinImage(imgFileName.c_str(), STARTUP_ADDR);
-      } else if (program_ext == "hex") {
-        ram.loadHexImage(imgFileName.c_str());
-      } else {
-        std::cout << "*** error: only *.bin or *.hex images supported." << std::endl;
-        return -1;
-      }
-    }
+    // {
+    //   std::string program_ext(fileExtension(imgFileName.c_str()));
+    //   if (program_ext == "bin") {
+    //     ram.loadBinImage(imgFileName.c_str(), STARTUP_ADDR);
+    //   } else if (program_ext == "hex") {
+    //     ram.loadHexImage(imgFileName.c_str());
+    //   } else {
+    //     std::cout << "*** error: only *.bin or *.hex images supported." << std::endl;
+    //     return -1;
+    //   }
+    // }
 
     // create processor
     Processor processor(arch);

@@ -1,12 +1,12 @@
 CXXFLAGS += -std=c++11 -Wall -Wextra -Wfatal-errors
 
 CXXFLAGS += -fPIC -Wno-maybe-uninitialized -g
-CXXFLAGS += -I../include -I../common -I../../hw -I../../sim/common -I../../third_party/socket-lib
+CXXFLAGS += -I../include -I../common -I../../hw -I../../sim/common -I../../third_party/socketlib
 CXXFLAGS += $(CONFIGS)
 CXXFLAGS += -DDUMP_PERF_STATS
 
 LDFLAGS += -shared -pthread
-LDFLAGS += -L../../third_party/socket-lib -lsocketlib
+LDFLAGS += -L../../third_party/socketlib -lsocketlib
 
 SRCS = vortex.cpp ../common/vx_utils.cpp
 
@@ -24,7 +24,7 @@ all: $(PROJECT) libsocketlib.so
 $(PROJECT): $(SRCS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
-libsocketlib.so: ../../third_party/socket-lib/libsocketlib.so
+libsocketlib.so: ../../third_party/socketlib/libsocketlib.so
 	cp $^ $@
 
 clean:

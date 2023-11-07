@@ -1,6 +1,7 @@
 #include "processor.h"
 #include "core.h"
 #include "constants.h"
+#include <socketlib.h>
 
 using namespace vortex;
 
@@ -11,6 +12,7 @@ private:
   std::vector<Switch<MemReq, MemRsp>::Ptr> l2_mem_switches_;
   Cache::Ptr l3cache_;
   Switch<MemReq, MemRsp>::Ptr l3_mem_switch_;
+  RAM *ram_;
 
 public:
   Impl(const ArchDef& arch) 
@@ -131,6 +133,7 @@ public:
   }
 
   void attach_ram(RAM* ram) {
+    ram_ = ram;
     for (auto core : cores_) {
       core->attach_ram(ram);
     }
@@ -138,10 +141,39 @@ public:
 
   int run() {
     SimPlatform::instance().reset();
+    init_client(6969);
     bool running;
     int exitcode = 0;
+    bool waiting = false;
+    bool started = false;
     do {
-      SimPlatform::instance().tick();
+      std::vector<char> write_req_buf;
+      std::vector<char> read_req_buf;
+      if (socket_receive(1, false, write_req_buf)) {
+        struct write_req wreq;
+        deserialize_args(write_req_buf, wreq);
+        ram_->write(write_req_buf.data() + sizeof(struct write_req), (uint64_t) wreq.addr, (uint64_t) wreq.size);
+        socket_send(0, 1, empty_vec, empty_vec);
+      }
+      if (socket_receive(2, false, read_req_buf)) {
+        struct read_req rreq;
+        deserialize_args(read_req_buf, rreq);
+        std::vector<char> read_buffer;
+        read_buffer.resize(rreq.size);
+        ram_->read(read_buffer.data(), (uint64_t) rreq.addr, (uint64_t) rreq.size);
+        socket_send(0, 2, empty_vec, read_buffer);
+      }
+      if (socket_receive(3, false, read_req_buf)) {
+        // SimPlatform::instance().reset();
+        started = true;
+        printf("simx reset\n");
+        socket_send(0, 3, empty_vec, empty_vec);
+      }
+      if (socket_receive(4, false, read_req_buf)) {
+        printf("simx wait\n");
+        waiting = true;
+      }
+      if (started) SimPlatform::instance().tick();
       running = false;
       for (auto& core : cores_) {
         if (core->running()) {
@@ -150,10 +182,15 @@ public:
         if (core->check_exit()) {
           exitcode = core->getIRegValue(3);
           running = false;
-          break;
+          started = false;
+          // break;
         }
       }
-    } while (running);
+      if (!running && waiting) {
+        socket_send(0, 4, empty_vec, empty_vec);
+        waiting = false;
+      }
+    } while (true);
 
     return exitcode;
   }

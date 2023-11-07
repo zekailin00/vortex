@@ -16,7 +16,7 @@
 #include <mem.h>
 #include <util.h>
 
-#include <socket_lib.h>
+#include <socketlib.h>
 
 #define RAM_PAGE_SIZE 4096
 

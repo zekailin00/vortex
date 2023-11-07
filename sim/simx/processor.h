@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 namespace vortex {
 
@@ -17,6 +18,16 @@ public:
 private:
   class Impl;
   Impl* impl_;
+};
+
+struct read_req {
+  uint32_t addr;
+  uint32_t size;
+};
+
+struct write_req {
+  uint32_t addr;
+  uint32_t size;
 };
 
 }
