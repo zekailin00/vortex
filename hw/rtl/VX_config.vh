@@ -290,11 +290,13 @@
 // Pipeline Queues ////////////////////////////////////////////////////////////
 
 // Size of Instruction Buffer
+// NOTE(hansung): This is per warp, no need to multiply `NUM_WARPS
 `ifndef IBUF_SIZE
-`define IBUF_SIZE (`NUM_WARPS * 2)
+`define IBUF_SIZE 4
 `endif
 
 // Size of LSU Request Queue
+// NOTE(hansung): Works with (`NUM_WARPS * 2) but not with (`NUM_WARPS * 4)...
 `ifndef LSUQ_SIZE
 `define LSUQ_SIZE (`NUM_WARPS * 2)
 `endif
