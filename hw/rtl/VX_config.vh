@@ -292,7 +292,7 @@
 // Size of Instruction Buffer
 // NOTE(hansung): This is per warp, no need to multiply `NUM_WARPS
 `ifndef IBUF_SIZE
-`define IBUF_SIZE 4
+`define IBUF_SIZE 64
 `endif
 
 // Size of LSU Request Queue
