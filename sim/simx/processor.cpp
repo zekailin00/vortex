@@ -141,7 +141,9 @@ public:
 
   int run() {
     SimPlatform::instance().reset();
-    init_client(6969);
+    printf("Connect to socket file\n");
+    // init_client(6969);
+    init_client_file("/scratch/zekailin00/cosimulation-benchmark/test.socket");
     bool running;
     int exitcode = 0;
     bool waiting = false;
@@ -185,6 +187,12 @@ public:
           started = false;
           // break;
         }
+      }
+      if (!running && started) {
+        printf("reset\n");
+        printf("Cycles: %ld\n", SimPlatform::instance().cycles());
+        SimPlatform::instance().reset();
+        started = false;
       }
       if (!running && waiting) {
         socket_send(0, 4, empty_vec, empty_vec);
