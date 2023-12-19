@@ -92,12 +92,13 @@ public:
     }
 
     int upload(const void* src, uint64_t dest_addr, uint64_t size, uint64_t src_offset) {
+        printf("Upload 1\n");
         uint64_t asize = aligned_size(size, CACHE_BLOCK_SIZE);
-        if (dest_addr + asize > LOCAL_MEM_SIZE)
+        if (dest_addr + asize > ALLOC_BASE_ADDR + LOCAL_MEM_SIZE)
             return -1;
-
+        printf("Upload 1\2\n");
         ram_.write((const uint8_t*)src + src_offset, dest_addr, asize);
-        
+        printf("Upload 2\n");
         /*printf("VXDRV: upload %d bytes to 0x%x\n", size, dest_addr);
         for (int i = 0; i < size; i += 4) {
             printf("mem-write: 0x%x <- 0x%x\n", dest_addr + i, *(uint32_t*)((uint8_t*)src + src_offset + i));
@@ -313,15 +314,19 @@ extern int vx_buf_free(vx_buffer_h hbuffer) {
 }
 
 extern int vx_copy_to_dev(vx_buffer_h hbuffer, uint64_t dev_maddr, uint64_t size, uint64_t src_offset) {
+
+    printf("pass 1\n");
+
     if (nullptr == hbuffer 
      || 0 >= size)
         return -1;
+    printf("pass 2\n");
 
     auto buffer = (vx_buffer*)hbuffer;
-
+    printf("pass 3\n");
     if (size + src_offset > buffer->size())
         return -1;
-
+    printf("pass 4\n");
     return buffer->device()->upload(buffer->data(), dev_maddr, size, src_offset);
 }
 
