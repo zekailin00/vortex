@@ -16,7 +16,12 @@
 #include <mem.h>
 #include <util.h>
 
+#ifdef ROCKET_CPU_SIM
+#define ENABLE_SOCKET(funct)
+#else
 #include <socketlib.h>
+#define ENABLE_SOCKET(funct) funct
+#endif
 
 #define RAM_PAGE_SIZE 4096
 
@@ -81,7 +86,8 @@ public:
             RAM_PAGE_SIZE,
             CACHE_BLOCK_SIZE)
     {
-        init_server(6969);
+        // ENABLE_SOCKET(init_server(6969));
+        ENABLE_SOCKET(init_client_file("/scratch/zekailin00/chipyard/sims/vcs/test.socket"));
     }
 
     ~vx_device() {
@@ -106,12 +112,12 @@ public:
         if (dest_addr + asize > ALLOC_BASE_ADDR + LOCAL_MEM_SIZE)
             return -1;
 
-        socket_send(0, 1,
+        ENABLE_SOCKET(socket_send(0, 1,
             serialize_args((write_req) {(uint32_t) dest_addr, (uint32_t) size}),
-            std::vector<char>((char *) (src) + src_offset, (char *) (src) + src_offset + size));
+            std::vector<char>((char *) (src) + src_offset, (char *) (src) + src_offset + size)));
         std::vector<char> dest_buf;
         printf("blocking to receive response\n");
-        socket_receive(1, true, dest_buf);
+        ENABLE_SOCKET(socket_receive(1, true, dest_buf));
         printf("blocking ended\n");
 
         // assumes zero based
@@ -139,12 +145,12 @@ public:
 
 
         printf("download data from %lx\n", src_addr);
-        socket_send(0, 2,
+        ENABLE_SOCKET(socket_send(0, 2,
             serialize_args((read_req) {(uint32_t) src_addr, (uint32_t) size}),
-            empty_vec);
+            empty_vec));
         std::vector<char> dest_buf;
         printf("blocking to receive response\n");
-        socket_receive(2, true, dest_buf);
+        ENABLE_SOCKET(socket_receive(2, true, dest_buf));
         printf("blocking ended\n");
         std::copy(dest_buf.begin(), dest_buf.end(), (char *) dest + dest_offset);
 
@@ -164,16 +170,16 @@ public:
 
         printf("start\n");
         std::vector<char> empty_vec;
-        socket_send(0, 3, empty_vec, empty_vec);
-        socket_receive(3, true, empty_vec);
+        ENABLE_SOCKET(socket_send(0, 3, empty_vec, empty_vec));
+        ENABLE_SOCKET(socket_receive(3, true, empty_vec));
         
         return 0;
     }
 
     int wait(uint64_t timeout) {
         std::vector<char> empty_vec;
-        socket_send(0, 4, empty_vec, empty_vec);
-        socket_receive(4, true, empty_vec);
+        ENABLE_SOCKET(socket_send(0, 4, empty_vec, empty_vec));
+        ENABLE_SOCKET(socket_receive(4, true, empty_vec));
         // if (!future_.valid())
         //     return 0;
         // uint64_t timeout_sec = timeout / 1000;
